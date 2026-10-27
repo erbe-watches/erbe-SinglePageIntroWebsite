@@ -599,68 +599,59 @@ h1, h2, h3, h4, h5, h6 {
 
 .about-image {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .about-image-card {
   position: relative;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-card);
-  background: var(--color-bg-card);
+  background: var(--color-bg-alt);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .about-banner-img {
   width: 100%;
-  height: 100%;
-  aspect-ratio: 16/10;
-  object-fit: cover;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
   display: block;
+  border-radius: 4px;
   transition: transform var(--transition-slow);
 }
 
 .about-image-card:hover .about-banner-img {
-  transform: scale(1.03);
-}
-
-.about-image-seal-overlay {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: rgba(239, 230, 213, 0.92);
-  border: 1.5px solid var(--color-gold);
-  padding: 4px;
-  box-shadow: 0 4px 18px rgba(24, 18, 6, 0.2);
-  backdrop-filter: blur(8px);
-  z-index: 3;
-}
-
-.about-image-seal-overlay img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+  transform: scale(1.02);
 }
 
 .about-stats {
-  position: absolute;
-  bottom: -25px;
-  right: -20px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
-  z-index: 4;
+  margin-top: 5px;
 }
 
 .about-stat {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  padding: 18px 24px;
-  border-radius: 4px;
+  padding: 16px 20px;
+  border-radius: 6px;
   text-align: center;
   box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.about-stat:hover {
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .about-stat-number {
@@ -1661,7 +1652,7 @@ h1, h2, h3, h4, h5, h6 {
   .hero-ctas { flex-direction: column; align-items: center; }
   .btn { width: 100%; justify-content: center; }
   .social-grid { grid-template-columns: 1fr; }
-  .about-stats { flex-direction: column; }
+  .about-stats { grid-template-columns: 1fr; }
   .promise-banner { padding: 30px 20px; }
   .contact-form { padding: 24px; }
 }
