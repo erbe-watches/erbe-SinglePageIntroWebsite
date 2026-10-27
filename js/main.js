@@ -52,6 +52,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ---------- Supabase Configuration & Lead Sync ----------
+  const SUPABASE_CONFIG = {
+    url: 'https://ajqgdcywqdpnrckghyax.supabase.co',
+    publishableKey: 'sb_publishable_lHvCsS1U7kPOPlPVLLSpmA_k8ZbPxKv'
+  };
+
+  async function saveLeadToSupabase(leadData) {
+    try {
+      const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_CONFIG.publishableKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.publishableKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          name: leadData.name || null,
+          phone: leadData.phone || null,
+          email: leadData.email || null,
+          source: leadData.source || 'remember_modal'
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn('Supabase sync status:', response.status, errorText);
+      } else {
+        console.log('✅ Lead saved to Supabase successfully!');
+      }
+    } catch (err) {
+      console.warn('Supabase network error (lead preserved locally):', err);
+    }
+  }
+
   // ---------- Remember Me Modal Dialog ----------
   const rememberModal = document.querySelector('#rememberModal');
   const openModalBtn = document.querySelector('#openRememberModal');
@@ -121,16 +156,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 6) Form submission
+  // 6) Form submission with Supabase Sync
   if (rememberForm) {
-    rememberForm.addEventListener('submit', (e) => {
+    rememberForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const submitBtn = rememberForm.querySelector('.btn-modal-submit');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+      }
 
       const name = document.querySelector('#rememberName')?.value.trim() || '';
       const phone = document.querySelector('#rememberPhone')?.value.trim() || '';
       const email = document.querySelector('#rememberEmail')?.value.trim() || '';
 
-      // Save user details
+      // 1. Save user details locally in browser (offline resilience)
       const customerData = {
         name,
         phone,
@@ -140,13 +182,26 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('erbe_saved_customer', JSON.stringify(customerData));
       sessionStorage.setItem('erbe_remember_dismissed', 'true');
 
-      // Hide form and show success state
+      // 2. Push to Supabase Cloud Database
+      await saveLeadToSupabase({
+        name,
+        phone,
+        email,
+        source: 'remember_modal'
+      });
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHtml;
+      }
+
+      // 3. Hide form and show success state
       rememberForm.style.display = 'none';
       if (rememberSuccess) {
         rememberSuccess.style.display = 'block';
       }
 
-      // Close after 2.5 seconds
+      // 4. Auto-close after 2.5 seconds
       setTimeout(() => {
         closeRememberDialog();
         setTimeout(() => {
@@ -223,9 +278,17 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       const formData = new FormData(contactForm);
-      const name = formData.get('name');
-      const phone = formData.get('phone');
-      const message = formData.get('message');
+      const name = formData.get('name') || '';
+      const phone = formData.get('phone') || '';
+      const message = formData.get('message') || '';
+
+      // Also persist lead to Supabase
+      saveLeadToSupabase({
+        name: name,
+        phone: phone,
+        email: null,
+        source: 'contact_page: ' + (message ? message.substring(0, 80) : '')
+      });
 
       // Open WhatsApp with pre-filled message
       const whatsappMsg = encodeURIComponent(
