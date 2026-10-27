@@ -8,10 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('.header');
   if (header) {
     window.addEventListener('scroll', () => {
-      header.classList.toggle('scrolled', window.scrollY > 50);
+      header.classList.toggle('scrolled', window.scrollY > 30);
     });
-    // Initial check
-    header.classList.toggle('scrolled', window.scrollY > 50);
+    header.classList.toggle('scrolled', window.scrollY > 30);
   }
 
   // ---------- Mobile Menu Toggle ----------
@@ -52,6 +51,116 @@ document.addEventListener('DOMContentLoaded', () => {
       link.classList.add('active');
     }
   });
+
+  // ---------- Remember Me Modal Dialog ----------
+  const rememberModal = document.querySelector('#rememberModal');
+  const openModalBtn = document.querySelector('#openRememberModal');
+  const closeModalBtn = document.querySelector('#closeRememberModal');
+  const rememberForm = document.querySelector('#rememberForm');
+  const rememberSuccess = document.querySelector('#rememberSuccess');
+  const closeSuccessBtn = document.querySelector('#closeSuccessBtn');
+
+  function openRememberDialog() {
+    if (rememberModal) {
+      rememberModal.classList.add('active');
+      rememberModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeRememberDialog() {
+    if (rememberModal) {
+      rememberModal.classList.remove('active');
+      rememberModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      sessionStorage.setItem('erbe_remember_dismissed', 'true');
+    }
+  }
+
+  // 1) Open via Red Alert Line (header click)
+  if (openModalBtn) {
+    openModalBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openRememberDialog();
+    });
+  }
+
+  // 2) Close via X button
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', closeRememberDialog);
+  }
+
+  // 3) Close via clicking on dark backdrop
+  if (rememberModal) {
+    rememberModal.addEventListener('click', (e) => {
+      if (e.target === rememberModal) {
+        closeRememberDialog();
+      }
+    });
+  }
+
+  // 4) Close via Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && rememberModal && rememberModal.classList.contains('active')) {
+      closeRememberDialog();
+    }
+  });
+
+  // 5) Auto-trigger on home page when user scrolls a little bit
+  let scrollTriggered = false;
+  window.addEventListener('scroll', () => {
+    if (!scrollTriggered && window.scrollY > 120) {
+      // Check if user has already dismissed or completed it in this session
+      const alreadyDone = sessionStorage.getItem('erbe_remember_dismissed');
+      if (!alreadyDone) {
+        scrollTriggered = true;
+        setTimeout(() => {
+          openRememberDialog();
+        }, 300);
+      }
+    }
+  });
+
+  // 6) Form submission
+  if (rememberForm) {
+    rememberForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.querySelector('#rememberName')?.value.trim() || '';
+      const phone = document.querySelector('#rememberPhone')?.value.trim() || '';
+      const email = document.querySelector('#rememberEmail')?.value.trim() || '';
+
+      // Save user details
+      const customerData = {
+        name,
+        phone,
+        email,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem('erbe_saved_customer', JSON.stringify(customerData));
+      sessionStorage.setItem('erbe_remember_dismissed', 'true');
+
+      // Hide form and show success state
+      rememberForm.style.display = 'none';
+      if (rememberSuccess) {
+        rememberSuccess.style.display = 'block';
+      }
+
+      // Close after 2.5 seconds
+      setTimeout(() => {
+        closeRememberDialog();
+        setTimeout(() => {
+          rememberForm.reset();
+          rememberForm.style.display = 'block';
+          if (rememberSuccess) rememberSuccess.style.display = 'none';
+        }, 400);
+      }, 2500);
+    });
+  }
+
+  if (closeSuccessBtn) {
+    closeSuccessBtn.addEventListener('click', closeRememberDialog);
+  }
 
   // ---------- Scroll Reveal Animation ----------
   const revealElements = document.querySelectorAll('.reveal');
@@ -131,10 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const submitBtn = contactForm.querySelector('.form-submit .btn');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-      submitBtn.style.background = '#2ecc71';
+      submitBtn.style.background = '#2E7D32';
+      submitBtn.style.color = '#FFFFFF';
       setTimeout(() => {
         submitBtn.innerHTML = originalText;
         submitBtn.style.background = '';
+        submitBtn.style.color = '';
       }, 3000);
     });
   }
@@ -148,7 +259,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (target) {
         e.preventDefault();
         const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
-        const targetPos = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+        const alertHeight = document.querySelector('.alert-bar')?.offsetHeight || 0;
+        const targetPos = target.getBoundingClientRect().top + window.scrollY - headerHeight - alertHeight;
         window.scrollTo({ top: targetPos, behavior: 'smooth' });
       }
     });

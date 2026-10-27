@@ -41,6 +41,15 @@
     </div>
   </header>
 
+  <!-- ============ RED ALERT LINE ============ -->
+  <div class="alert-bar" id="openRememberModal" role="button" tabindex="0">
+    <div class="container alert-bar-content">
+      <span class="alert-pulse"></span>
+      <span class="alert-text">Press me to remember your self</span>
+      <i class="fas fa-arrow-right alert-arrow"></i>
+    </div>
+  </div>
+
   <!-- PAGE HERO -->
   <section class="page-hero">
     <div class="container">
@@ -234,6 +243,66 @@
       </div>
     </div>
   </footer>
+
+  <!-- ============ REMEMBER ME MODAL ============ -->
+  <div class="modal-overlay" id="rememberModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeRememberModal" aria-label="Close dialog">&times;</button>
+      
+      <div class="modal-header">
+        <div class="modal-logo-wrapper">
+          <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="modal-logo" />
+        </div>
+        <span class="modal-badge">VIP Customer Access</span>
+        <h3 class="modal-title">Remember Me</h3>
+        <p class="modal-subtitle">
+          Save your details so ERBE can recognize you, remember your preferences, and share exclusive watch drops & 20–30% discount alerts!
+        </p>
+      </div>
+
+      <form class="modal-form" id="rememberForm">
+        <div class="form-group">
+          <label for="rememberName">Full Name</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="rememberName" name="name" placeholder="Enter your full name" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rememberPhone">WhatsApp / Phone Number</label>
+          <div class="input-with-icon">
+            <i class="fab fa-whatsapp"></i>
+            <input type="tel" id="rememberPhone" name="phone" placeholder="e.g. 0307 1771829" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rememberEmail">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="rememberEmail" name="email" placeholder="yourname@gmail.com" required />
+          </div>
+        </div>
+
+        <div class="modal-security-note">
+          <i class="fas fa-shield-alt"></i>
+          <span>100% Private & SSL Secure. We never share your data with 3rd parties.</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-modal-submit">
+          <i class="fas fa-check-circle"></i> Remember Me
+        </button>
+      </form>
+
+      <div class="modal-success" id="rememberSuccess" style="display: none;">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <h4>You're Remembered!</h4>
+        <p>Thank you for connecting with ERBE — Legacy of Time. Your details have been saved successfully.</p>
+        <button type="button" class="btn btn-outline" id="closeSuccessBtn">Continue Exploring</button>
+      </div>
+    </div>
+  </div>
 
   <script src="js/main.js"></script>
 </body>
