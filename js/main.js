@@ -195,13 +195,31 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = originalBtnHtml;
       }
 
-      // 3. Hide form and show success state
+      // 3. Track Conversion in Meta Pixel & GA4
+      try {
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', {
+            content_name: 'Remember Me VIP Access',
+            currency: 'PKR'
+          });
+        }
+        if (typeof gtag === 'function') {
+          gtag('event', 'generate_lead', {
+            event_category: 'engagement',
+            event_label: 'remember_modal'
+          });
+        }
+      } catch (trackErr) {
+        console.warn('Analytics tracking error:', trackErr);
+      }
+
+      // 4. Hide form and show success state
       rememberForm.style.display = 'none';
       if (rememberSuccess) {
         rememberSuccess.style.display = 'block';
       }
 
-      // 4. Auto-close after 2.5 seconds
+      // 5. Auto-close after 2.5 seconds
       setTimeout(() => {
         closeRememberDialog();
         setTimeout(() => {
@@ -290,6 +308,24 @@ document.addEventListener('DOMContentLoaded', () => {
         source: 'contact_page: ' + (message ? message.substring(0, 80) : '')
       });
 
+      // Track Contact Form Event in Meta Pixel & GA4
+      try {
+        if (typeof fbq === 'function') {
+          fbq('track', 'Contact', {
+            content_name: 'Contact Page Form',
+            currency: 'PKR'
+          });
+        }
+        if (typeof gtag === 'function') {
+          gtag('event', 'contact', {
+            event_category: 'conversion',
+            event_label: 'contact_form'
+          });
+        }
+      } catch (trackErr) {
+        console.warn('Analytics tracking error:', trackErr);
+      }
+
       // Open WhatsApp with pre-filled message
       const whatsappMsg = encodeURIComponent(
         `Hello ERBE Watches!\n\nName: ${name}\nPhone: ${phone}\n\nMessage: ${message}`
@@ -312,6 +348,28 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 3000);
     });
   }
+
+  // ---------- WhatsApp Click Event Tracking (Buttons & Floating Links) ----------
+  document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+    link.addEventListener('click', () => {
+      try {
+        if (typeof fbq === 'function') {
+          fbq('track', 'Contact', {
+            content_name: 'WhatsApp Click',
+            currency: 'PKR'
+          });
+        }
+        if (typeof gtag === 'function') {
+          gtag('event', 'contact', {
+            event_category: 'conversion',
+            event_label: 'whatsapp_chat'
+          });
+        }
+      } catch (trackErr) {
+        console.warn('Analytics tracking error:', trackErr);
+      }
+    });
+  });
 
   // ---------- Smooth scroll for anchor links ----------
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
