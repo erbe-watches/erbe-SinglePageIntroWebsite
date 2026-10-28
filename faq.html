@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/design-system.css" />
   <link rel="stylesheet" href="css/style.css" />
 
   <!-- Google tag (gtag.js) - Google Analytics 4 -->
@@ -69,11 +70,34 @@
   </header>
 
   <!-- ============ RED ALERT LINE ============ -->
-  <div class="alert-bar" id="openRememberModal" role="button" tabindex="0">
-    <div class="container alert-bar-content">
-      <span class="alert-pulse"></span>
-      <span class="alert-text">Press me to remember your self</span>
-      <i class="fas fa-arrow-right alert-arrow"></i>
+  <div class="alert-bar" id="openRememberModal" role="button" tabindex="0" title="Click to open VIP Remember Me access">
+    <div class="alert-ticker">
+      <div class="alert-ticker-track">
+        <div class="alert-ticker-item">
+          <span class="alert-pulse"></span>
+          <span class="alert-badge-pill">VIP ACCESS</span>
+          <span class="alert-text">Press me to remember your self</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">20–30% Below Market Rates</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">Check Your Parcel Before Paying (COD)</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">Direct Import Luxury Watches</span>
+          <i class="fas fa-arrow-right alert-arrow"></i>
+        </div>
+        <div class="alert-ticker-item" aria-hidden="true">
+          <span class="alert-pulse"></span>
+          <span class="alert-badge-pill">VIP ACCESS</span>
+          <span class="alert-text">Press me to remember your self</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">20–30% Below Market Rates</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">Check Your Parcel Before Paying (COD)</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">Direct Import Luxury Watches</span>
+          <i class="fas fa-arrow-right alert-arrow"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -390,26 +414,52 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="rememberPhone">WhatsApp / Phone Number</label>
-          <div class="input-with-icon">
-            <i class="fab fa-whatsapp"></i>
-            <input type="tel" id="rememberPhone" name="phone" placeholder="e.g. 0307 1771829" required />
+        <!-- Contact Method Switch -->
+        <div class="contact-switch-wrapper">
+          <label class="switch-label">Choose Contact Method:</label>
+          <div class="contact-switch-pills" role="tablist">
+            <button type="button" class="switch-pill active" id="tabPhoneBtn" data-tab="phone" role="tab" aria-selected="true">
+              <i class="fab fa-whatsapp"></i> WhatsApp / Phone
+            </button>
+            <button type="button" class="switch-pill" id="tabEmailBtn" data-tab="email" role="tab" aria-selected="false">
+              <i class="fas fa-envelope"></i> Email Address
+            </button>
           </div>
         </div>
 
-        <div class="form-group">
+        <!-- Phone Field (Active by default) -->
+        <div class="form-group contact-field" id="fieldPhoneGroup">
+          <label for="rememberPhone">Mobile / WhatsApp Number</label>
+          <div class="input-phone-group">
+            <span class="phone-prefix">+92</span>
+            <input 
+              type="tel" 
+              id="rememberPhone" 
+              name="phone" 
+              placeholder="307 1771829 or 0307 1771829" 
+              maxlength="11" 
+              inputmode="numeric" 
+            />
+          </div>
+          <span class="field-hint">Enter 10 or 11 digits (e.g. 0307... ya 307...)</span>
+        </div>
+
+        <!-- Email Field (Hidden by default) -->
+        <div class="form-group contact-field" id="fieldEmailGroup" style="display: none;">
           <label for="rememberEmail">Email Address</label>
           <div class="input-with-icon">
             <i class="fas fa-envelope"></i>
-            <input type="email" id="rememberEmail" name="email" placeholder="yourname@gmail.com" required />
+            <input 
+              type="email" 
+              id="rememberEmail" 
+              name="email" 
+              placeholder="name@gmail.com" 
+            />
           </div>
+          <span class="field-hint">We will email you exclusive watch drops & discount alerts</span>
         </div>
 
-        <div class="modal-security-note">
-          <i class="fas fa-shield-alt"></i>
-          <span>100% Private & SSL Secure. We never share your data with 3rd parties.</span>
-        </div>
+        <div class="modal-error-msg" id="rememberError" style="display: none;"></div>
 
         <button type="submit" class="btn btn-primary btn-modal-submit">
           <i class="fas fa-check-circle"></i> Remember Me

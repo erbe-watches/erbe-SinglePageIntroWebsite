@@ -94,12 +94,70 @@ document.addEventListener('DOMContentLoaded', () => {
   const rememberForm = document.querySelector('#rememberForm');
   const rememberSuccess = document.querySelector('#rememberSuccess');
   const closeSuccessBtn = document.querySelector('#closeSuccessBtn');
+  const tabPhoneBtn = document.querySelector('#tabPhoneBtn');
+  const tabEmailBtn = document.querySelector('#tabEmailBtn');
+  const fieldPhoneGroup = document.querySelector('#fieldPhoneGroup');
+  const fieldEmailGroup = document.querySelector('#fieldEmailGroup');
+  const rememberPhoneInput = document.querySelector('#rememberPhone');
+  const rememberEmailInput = document.querySelector('#rememberEmail');
+  const errorMsg = document.querySelector('#rememberError');
+
+  let activeContactTab = 'phone';
+
+  function switchContactTab(tab) {
+    activeContactTab = tab;
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    if (tab === 'phone') {
+      tabPhoneBtn?.classList.add('active');
+      tabPhoneBtn?.setAttribute('aria-selected', 'true');
+      tabEmailBtn?.classList.remove('active');
+      tabEmailBtn?.setAttribute('aria-selected', 'false');
+
+      if (fieldPhoneGroup) fieldPhoneGroup.style.display = 'block';
+      if (fieldEmailGroup) fieldEmailGroup.style.display = 'none';
+      rememberPhoneInput?.focus();
+    } else {
+      tabEmailBtn?.classList.add('active');
+      tabEmailBtn?.setAttribute('aria-selected', 'true');
+      tabPhoneBtn?.classList.remove('active');
+      tabPhoneBtn?.setAttribute('aria-selected', 'false');
+
+      if (fieldEmailGroup) fieldEmailGroup.style.display = 'block';
+      if (fieldPhoneGroup) fieldPhoneGroup.style.display = 'none';
+      rememberEmailInput?.focus();
+    }
+  }
+
+  if (tabPhoneBtn) tabPhoneBtn.addEventListener('click', () => switchContactTab('phone'));
+  if (tabEmailBtn) tabEmailBtn.addEventListener('click', () => switchContactTab('email'));
+
+  // Disallow non-numeric characters and enforce max 11 digits in real-time
+  if (rememberPhoneInput) {
+    rememberPhoneInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (errorMsg) errorMsg.style.display = 'none';
+    });
+  }
+
+  if (rememberEmailInput) {
+    rememberEmailInput.addEventListener('input', () => {
+      if (errorMsg) errorMsg.style.display = 'none';
+    });
+  }
+
+  function preventModalScroll(e) {
+    e.preventDefault();
+  }
 
   function openRememberDialog() {
     if (rememberModal) {
       rememberModal.classList.add('active');
       rememberModal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      // Completely block wheel & touch scrolling on background
+      window.addEventListener('wheel', preventModalScroll, { passive: false });
+      window.addEventListener('touchmove', preventModalScroll, { passive: false });
     }
   }
 
@@ -108,6 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
       rememberModal.classList.remove('active');
       rememberModal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      window.removeEventListener('wheel', preventModalScroll);
+      window.removeEventListener('touchmove', preventModalScroll);
       sessionStorage.setItem('erbe_remember_dismissed', 'true');
     }
   }
@@ -156,10 +216,105 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 6) Form submission with Supabase Sync
+  // 6) Form submission with Supabase Sync & strict validation
   if (rememberForm) {
     rememberForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const name = document.querySelector('#rememberName')?.value.trim() || '';
+      let normalizedPhone = null;
+      let normalizedEmail = null;
+
+      if (!name) {
+        if (errorMsg) {
+          errorMsg.textContent = 'Baraye meharbani apna mukammal naam darj karein.';
+          errorMsg.style.display = 'block';
+        }
+        document.querySelector('#rememberName')?.focus();
+        return;
+      }
+
+      // Tab-specific validation
+      if (activeContactTab === 'phone') {
+        const rawPhone = rememberPhoneInput?.value.replace(/\D/g, '') || '';
+
+        if (!rawPhone) {
+          if (errorMsg) {
+            errorMsg.textContent = 'Baraye meharbani apna WhatsApp / Mobile number darj karein.';
+            errorMsg.style.display = 'block';
+          }
+          rememberPhoneInput?.focus();
+          return;
+        }
+
+        if (rawPhone.length === 11) {
+          // 11 digits: Must start with 0
+          if (!rawPhone.startsWith('0')) {
+            if (errorMsg) {
+              errorMsg.textContent = '11-digit number 0 se shuru hona chahiye (e.g. 0307 1771829).';
+              errorMsg.style.display = 'block';
+            }
+            rememberPhoneInput?.focus();
+            return;
+          }
+          if (!rawPhone.startsWith('03')) {
+            if (errorMsg) {
+              errorMsg.textContent = 'Pakistani mobile number 03 se shuru hona chahiye (e.g. 0307 1771829).';
+              errorMsg.style.display = 'block';
+            }
+            rememberPhoneInput?.focus();
+            return;
+          }
+          // Strip leading 0 and format as +92*********
+          normalizedPhone = '+92' + rawPhone.substring(1);
+        } else if (rawPhone.length === 10) {
+          // 10 digits: Must start with 3
+          if (!rawPhone.startsWith('3')) {
+            if (errorMsg) {
+              errorMsg.textContent = '10-digit number 3 se shuru hona chahiye (e.g. 307 1771829).';
+              errorMsg.style.display = 'block';
+            }
+            rememberPhoneInput?.focus();
+            return;
+          }
+          normalizedPhone = '+92' + rawPhone;
+        } else {
+          if (errorMsg) {
+            errorMsg.textContent = 'Ghalat number! Pakistani number 10 ya 11 digits ka hota hai (e.g. 0307 1771829 ya 307 1771829).';
+            errorMsg.style.display = 'block';
+          }
+          rememberPhoneInput?.focus();
+          return;
+        }
+      } else {
+        // Email validation with regex
+        const rawEmail = rememberEmailInput?.value.trim() || '';
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!rawEmail) {
+          if (errorMsg) {
+            errorMsg.textContent = 'Baraye meharbani apna email address darj karein.';
+            errorMsg.style.display = 'block';
+          }
+          rememberEmailInput?.focus();
+          return;
+        }
+
+        if (!emailRegex.test(rawEmail)) {
+          if (errorMsg) {
+            errorMsg.textContent = 'Ghalat email format! Sahi email darj karein (e.g. name@gmail.com).';
+            errorMsg.style.display = 'block';
+          }
+          rememberEmailInput?.focus();
+          return;
+        }
+
+        normalizedEmail = rawEmail.toLowerCase();
+      }
+
+      if (errorMsg) {
+        errorMsg.style.display = 'none';
+      }
 
       const submitBtn = rememberForm.querySelector('.btn-modal-submit');
       const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
@@ -168,15 +323,11 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
       }
 
-      const name = document.querySelector('#rememberName')?.value.trim() || '';
-      const phone = document.querySelector('#rememberPhone')?.value.trim() || '';
-      const email = document.querySelector('#rememberEmail')?.value.trim() || '';
-
       // 1. Save user details locally in browser (offline resilience)
       const customerData = {
         name,
-        phone,
-        email,
+        phone: normalizedPhone,
+        email: normalizedEmail,
         savedAt: new Date().toISOString()
       };
       localStorage.setItem('erbe_saved_customer', JSON.stringify(customerData));
@@ -185,8 +336,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // 2. Push to Supabase Cloud Database
       await saveLeadToSupabase({
         name,
-        phone,
-        email,
+        phone: normalizedPhone,
+        email: normalizedEmail,
         source: 'remember_modal'
       });
 

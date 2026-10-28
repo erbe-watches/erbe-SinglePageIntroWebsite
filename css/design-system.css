@@ -1,0 +1,83 @@
+/* ==========================================================================
+   ERBE — Legacy of Time | Standard Design System
+   Global Design Tokens: Fonts (2), Font Sizes (3), Icon Sizes (3),
+                         Spacings (3), Button Sizes (3).
+   ========================================================================== */
+
+:root {
+  /* ==========================================================================
+     1. TWO FONTS (2 Fonts)
+     ========================================================================== */
+  /* Font 1: Luxury Serif for Headings & Display */
+  --font-display: 'Playfair Display', Georgia, serif;
+
+  /* Font 2: Clean UI Sans-Serif for Body, Inputs, Labels & Buttons */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Legacy aliases for backwards compatibility */
+  --font-heading: var(--font-display);
+  --font-body: var(--font-ui);
+
+  /* ==========================================================================
+     2. THREE FONT SIZES (3 Font Sizes)
+     ========================================================================== */
+  /* Size 1 - Small: Labels, hints, pills, badges, secondary text (14px) */
+  --fs-sm: 0.875rem;
+
+  /* Size 2 - Base / Standard: Inputs, buttons, body paragraphs, list items (16px) */
+  --fs-base: 1rem;
+
+  /* Size 3 - Large: Modal titles, card headings, section subheadings (22px) */
+  --fs-lg: 1.375rem;
+
+  /* Display sizes for massive hero titles */
+  --fs-hero: 2.75rem;
+
+  /* ==========================================================================
+     3. THREE ICON SIZES (3 Icon Sizes)
+     ========================================================================== */
+  /* Icon 1 - Small: Inline indicators, badges, tiny bullets (14px) */
+  --icon-sm: 14px;
+
+  /* Icon 2 - Medium: Input field icons, switch buttons, standard buttons (18px) */
+  --icon-md: 18px;
+
+  /* Icon 3 - Large: Modal close button, feature highlights, success badge (24px) */
+  --icon-lg: 24px;
+
+  /* ==========================================================================
+     4. THREE SPACINGS (3 Spacings)
+     ========================================================================== */
+  /* Spacing 1 - Small: Gap between label & input, icon to text, compact items (8px) */
+  --space-sm: 8px;
+
+  /* Spacing 2 - Medium: Form group gap, card padding elements, button padding (16px) */
+  --space-md: 16px;
+
+  /* Spacing 3 - Large: Modal padding, container margins, section blocks (24px) */
+  --space-lg: 24px;
+
+  /* ==========================================================================
+     5. THREE BUTTON SIZES (3 Button Sizes)
+     ========================================================================== */
+  /* Button 1 - Small: Switch pills, compact action chips */
+  --btn-sm-height: 36px;
+  --btn-sm-padding: 6px 14px;
+  --btn-sm-font-size: var(--fs-sm);
+  --btn-sm-icon-size: var(--icon-sm);
+  --btn-sm-radius: 6px;
+
+  /* Button 2 - Medium (STANDARD): Inputs, primary modal CTA, form triggers */
+  --btn-md-height: 44px;
+  --btn-md-padding: 10px 20px;
+  --btn-md-font-size: var(--fs-sm);
+  --btn-md-icon-size: var(--icon-md);
+  --btn-md-radius: 6px;
+
+  /* Button 3 - Large: Hero CTAs, main website conversion buttons */
+  --btn-lg-height: 52px;
+  --btn-lg-padding: 14px 28px;
+  --btn-lg-font-size: var(--fs-base);
+  --btn-lg-icon-size: var(--icon-md);
+  --btn-lg-radius: 8px;
+}
