@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product View — ERBE Legacy of Time</title>
+  <meta name="description" content="Explore direct-import luxury timepieces at 20–30% below market prices. 100% Cash on Delivery with open-parcel inspection before payment." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="images/erbe-logo.jpg" />
+  <link rel="apple-touch-icon" href="images/erbe-logo.jpg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/design-system.css?v=2.6" />
+  <link rel="stylesheet" href="css/style.css?v=2.6" />
+
+  <!-- Google tag (gtag.js) - Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHQ107E3PE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JHQ107E3PE');
+  </script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1147190308262519');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1147190308262519&ev=PageView&noscript=1"
+    alt="Meta Pixel" /></noscript>
+  <!-- End Meta Pixel Code -->
+
+  <!-- Tracker Engine -->
+  <script src="js/tracker.js"></script>
+
+  <style>
+    /* ====================================================
+       PRODUCT VIEW PAGE DEDICATED LUXURY STYLES
+       ==================================================== */
+    .product-view-section {
+      padding: 120px 0 70px;
+      min-height: calc(100vh - 120px);
+    }
+
+    .breadcrumb-nav {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--color-text-dim);
+    }
+
+    .breadcrumb-nav a {
+      color: var(--color-gold-dark);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .breadcrumb-nav a:hover {
+      color: var(--color-text);
+    }
+
+    .product-switcher-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .switcher-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 30px;
+      color: var(--color-text);
+      font-weight: 500;
+      font-size: 0.92rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .switcher-pill:hover {
+      border-color: var(--color-gold);
+      background: var(--color-bg-card-hover);
+    }
+
+    .switcher-pill.active {
+      background: var(--color-gold);
+      color: #FFFFFF;
+      border-color: var(--color-gold-dark);
+      box-shadow: 0 4px 15px rgba(156, 120, 68, 0.35);
+    }
+
+    /* Main Grid */
+    .product-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .product-details-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+    }
+
+    /* Left Gallery */
+    .gallery-container {
+      position: sticky;
+      top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .main-image-wrap {
+      position: relative;
+      background: #FFFFFF;
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 1/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-card);
+    }
+
+    .main-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .main-image-wrap:hover img {
+      transform: scale(1.04);
+    }
+
+    .badge-float {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: #181206;
+      color: #E5C282;
+      border: 1px solid rgba(197, 160, 89, 0.4);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+
+    .badge-open-parcel {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: #065F46;
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 10px rgba(6, 95, 70, 0.3);
+      z-index: 2;
+    }
+
+    .thumbnail-gallery {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .thumb-btn {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--color-border);
+      background: #FFFFFF;
+      cursor: pointer;
+      padding: 0;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-btn:hover {
+      border-color: var(--color-gold);
+    }
+
+    .thumb-btn.active {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 2px rgba(156, 120, 68, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Right Details Panel */
+    .product-info-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .product-brand-tag {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--color-gold-dark);
+      text-transform: uppercase;
+    }
+
+    .product-main-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--color-text);
+      line-height: 1.25;
+      font-family: var(--font-heading);
+    }
+
+    .product-subtitle {
+      font-size: 1rem;
+      color: var(--color-text-muted);
+      margin-top: -8px;
+    }
+
+    .ratings-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .stars-icon {
+      color: #F59E0B;
+    }
+
+    .review-count {
+      color: var(--color-text-dim);
+    }
+
+    /* Price Section */
+    .price-box {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .current-price {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--color-text);
+      font-family: var(--font-heading);
+    }
+
+    .original-price {
+      font-size: 1.3rem;
+      color: var(--color-text-dim);
+      text-decoration: line-through;
+    }
+
+    .save-badge {
+      background: #D32F2F;
+      color: #FFFFFF;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* Voucher Banner inside Price Box */
+    .voucher-callout-card {
+      background: linear-gradient(135deg, rgba(156, 120, 68, 0.12) 0%, rgba(197, 160, 89, 0.05) 100%);
+      border: 1px dashed var(--color-gold);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .voucher-text-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .voucher-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .voucher-subtext {
+      font-size: 0.82rem;
+      color: var(--color-text-muted);
+    }
+
+    .voucher-code-pill {
+      background: #181206;
+      color: #E5C282;
+      border: 1px solid #C5A059;
+      font-family: monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    /* Variant Selector */
+    .variant-selector-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .variant-label-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .active-variant-name {
+      color: var(--color-gold-dark);
+      font-weight: 700;
+    }
+
+    .swatches-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .swatch-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--color-bg-card);
+      border: 1.5px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-text);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .swatch-chip:hover {
+      border-color: var(--color-gold);
+      background: var(--color-bg-card-hover);
+    }
+
+    .swatch-chip.active {
+      border-color: var(--color-gold-dark);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 2px rgba(156, 120, 68, 0.4);
+      font-weight: 700;
+    }
+
+    .color-circle {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.2);
+      flex-shrink: 0;
+    }
+
+    /* CTAs */
+    .actions-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .btn-whatsapp-voucher {
+      background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+      color: #FFFFFF !important;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 1.08rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      width: 100%;
+      text-decoration: none;
+    }
+
+    .btn-whatsapp-voucher:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(37, 211, 102, 0.45);
+    }
+
+    .btn-secondary-action {
+      background: var(--color-bg-card);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 0.96rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-secondary-action:hover {
+      border-color: var(--color-gold);
+      background: var(--color-bg-card-hover);
+    }
+
+    /* COD Peace of Mind Box */
+    .peace-of-mind-box {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-top: 8px;
+    }
+
+    .peace-icon {
+      font-size: 1.5rem;
+      color: #16A34A;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .peace-text h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #14532D;
+      margin-bottom: 4px;
+    }
+
+    .peace-text p {
+      font-size: 0.85rem;
+      color: #166534;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    /* Specs & Highlights Accordion/Tabs */
+    .product-tabs-section {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .specs-table tr {
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .specs-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .specs-table td {
+      padding: 10px 16px;
+    }
+
+    .specs-table td.spec-key {
+      font-weight: 600;
+      color: var(--color-text-muted);
+      width: 40%;
+      background: var(--color-bg-alt);
+    }
+
+    .specs-table td.spec-val {
+      color: var(--color-text);
+      font-weight: 500;
+    }
+
+    .feature-bullets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .feature-bullets {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bullet-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--color-text);
+      background: var(--color-bg-card);
+      padding: 10px 14px;
+      border: 1px solid var(--color-border-light);
+      border-radius: 8px;
+    }
+
+    .bullet-item i {
+      color: var(--color-gold);
+    }
+
+    /* Voucher Success Confirmation Dialog */
+    .voucher-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+
+    .voucher-popup-overlay.active {
+      display: flex;
+    }
+
+    .voucher-modal-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-gold);
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .close-voucher-modal {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--color-text-dim);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="logo-img" />
+        <div class="logo-text">
+          <span class="logo-brand">ERBE</span>
+          <span class="logo-tagline">Legacy of Time</span>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html#collection" class="nav-link">Collection</a>
+        <a href="product.html?id=rolex-date" class="nav-link active">Watches</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="faq.html" class="nav-link">FAQ</a>
+      </nav>
+
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ RED ALERT LINE ============ -->
+  <div class="alert-bar" id="openRememberModal" role="button" tabindex="0" title="Click to open VIP Remember Me access">
+    <div class="alert-ticker">
+      <div class="alert-ticker-track">
+        <div class="alert-ticker-item">
+          <span class="alert-pulse"></span>
+          <span class="alert-badge-pill">VIP ACCESS</span>
+          <span class="alert-text">Press me to remember your self & get Rs. 500 Voucher</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">20–30% Below Market Rates</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">Check Your Parcel Before Paying (COD)</span>
+          <i class="fas fa-arrow-right alert-arrow"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PRODUCT DETAIL MAIN ============ -->
+  <main class="product-view-section">
+    <div class="container">
+
+      <!-- Breadcrumbs -->
+      <div class="breadcrumb-nav">
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <span>/</span>
+        <a href="index.html#collection">Inventory</a>
+        <span>/</span>
+        <span id="breadcrumbCurrent">Rolex Oyster Date</span>
+      </div>
+
+      <!-- Product Quick Switcher -->
+      <div class="product-switcher-bar">
+        <a href="product.html?id=rolex-date" class="switcher-pill" id="pillRolex">
+          <i class="fas fa-crown"></i> Rolex Oyster Date (Rs. 1,450)
+        </a>
+        <a href="product.html?id=tubular-dual" class="switcher-pill" id="pillTubular">
+          <i class="fas fa-clock"></i> Tubular Dual Sport (Rs. 2,200)
+        </a>
+      </div>
+
+      <!-- Main Product Details Grid -->
+      <div class="product-details-grid">
+
+        <!-- Left: Image Gallery -->
+        <div class="gallery-container">
+          <div class="main-image-wrap">
+            <span class="badge-float" id="productBadgeTag">Bestseller — Direct Import</span>
+            <img src="images/products/rolex-black-twotone.jpg" alt="Selected Watch Model" id="mainGalleryImg" />
+            <div class="badge-open-parcel">
+              <i class="fas fa-box-open"></i> Open Parcel Check Allowed
+            </div>
+          </div>
+
+          <!-- Thumbnails -->
+          <div class="thumbnail-gallery" id="thumbnailGallery">
+            <!-- Injected dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Information & Ordering -->
+        <div class="product-info-panel">
+          <div class="product-brand-tag" id="productCategory">Luxury Tribute Edition</div>
+          <h1 class="product-main-title" id="productTitle">Rolex Oyster Date (Second Copy)</h1>
+          <p class="product-subtitle" id="productSubtitle">Quartz Movement • Date Working • Stainless Steel Chain</p>
+
+          <div class="ratings-row">
+            <div class="stars-icon">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+            </div>
+            <span class="ratings-score"><strong>4.9</strong> / 5.0</span>
+            <span class="review-count">(Verified Customer Choice)</span>
+          </div>
+
+          <!-- Price & Voucher Box -->
+          <div class="price-box">
+            <div class="price-row">
+              <span class="current-price" id="displayPrice">Rs. 1,450</span>
+              <span class="original-price" id="displayOriginalPrice">Rs. 2,400</span>
+              <span class="save-badge" id="displaySavePercent">40% OFF</span>
+            </div>
+
+            <!-- 1-Tap Voucher Box -->
+            <div class="voucher-callout-card">
+              <div class="voucher-text-wrap">
+                <span class="voucher-title"><i class="fas fa-ticket-alt" style="color: var(--color-gold);"></i> 1-Tap WhatsApp Voucher Activated!</span>
+                <span class="voucher-subtext">Click below to auto-claim Rs. 500 off on your order</span>
+              </div>
+              <div class="voucher-code-pill">ERBE-VIP500</div>
+            </div>
+          </div>
+
+          <!-- Color / Variant Selector -->
+          <div class="variant-selector-section">
+            <div class="variant-label-wrap">
+              <span>Select Color Variant:</span>
+              <span class="active-variant-name" id="selectedVariantText">Black Two-Tone</span>
+            </div>
+            <div class="swatches-grid" id="swatchesContainer">
+              <!-- Swatches injected by JS -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="actions-box">
+            <button type="button" class="btn-whatsapp-voucher" id="btnOrderWhatsApp">
+              <i class="fab fa-whatsapp" style="font-size: 1.4rem;"></i>
+              <span>Order Now on WhatsApp (1-Tap Voucher)</span>
+            </button>
+
+            <button type="button" class="btn-secondary-action" id="btnRememberQuick">
+              <i class="fas fa-bell"></i> Save For Later (VIP Remember Me)
+            </button>
+          </div>
+
+          <!-- Peace of Mind COD Assurance -->
+          <div class="peace-of-mind-box">
+            <div class="peace-icon"><i class="fas fa-shield-check"></i></div>
+            <div class="peace-text">
+              <h4>Pakistan-Wide Cash on Delivery (COD)</h4>
+              <p>
+                <strong>Parcel Khol Kar Check Karein:</strong> Courier rider ke samne pehle parcel khol kar watch tasalli se check karein. Mukammal mutma'in honay ke baad cash ada karein!
+              </p>
+            </div>
+          </div>
+
+          <!-- Technical Specs & Highlights -->
+          <div class="product-tabs-section">
+            <h3 style="font-size: 1.15rem; font-family: var(--font-heading); margin-bottom: 8px;">Specifications & Features</h3>
+            
+            <table class="specs-table" id="specsTable">
+              <!-- Injected by JS -->
+            </table>
+
+            <div class="feature-bullets" id="featureBullets">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============ VOUCHER SUCCESS CONFIRMATION MODAL ============ -->
+  <div class="voucher-popup-overlay" id="voucherPopup">
+    <div class="voucher-modal-card">
+      <button class="close-voucher-modal" id="closeVoucherPopup">&times;</button>
+      <div style="font-size: 3rem; color: #25D366; margin-bottom: 12px;">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 8px;">Voucher Claimed!</h3>
+      <p style="color: var(--color-text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+        Your Rs. 500 VIP voucher <strong>ERBE-VIP500</strong> has been applied. We are opening WhatsApp to finalize your delivery details with open-parcel inspection!
+      </p>
+
+      <div style="background: var(--color-bg-alt); padding: 14px; border-radius: 10px; margin-bottom: 20px; text-align: left; font-size: 0.88rem;">
+        <div><strong>Watch:</strong> <span id="modalWatchSummary">-</span></div>
+        <div><strong>Variant:</strong> <span id="modalVariantSummary">-</span></div>
+        <div><strong>Special COD Price:</strong> <span id="modalPriceSummary">-</span></div>
+      </div>
+
+      <a href="#" target="_blank" class="btn btn-whatsapp-voucher" id="modalWhatsAppDirectBtn">
+        <i class="fab fa-whatsapp"></i> Continue to WhatsApp Now
+      </a>
+    </div>
+  </div>
+
+  <!-- ============ REMEMBER ME MODAL ============ -->
+  <div class="modal-overlay" id="rememberModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeRememberModal" aria-label="Close dialog">&times;</button>
+      
+      <div class="modal-header">
+        <div class="modal-logo-wrapper">
+          <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="modal-logo" />
+        </div>
+        <span class="modal-badge">VIP Customer Access</span>
+        <h3 class="modal-title">Remember Me</h3>
+        <p class="modal-subtitle">
+          Save your details to receive instant VIP discount drops & Rs. 500 Welcome Voucher on your favorite watches!
+        </p>
+      </div>
+
+      <form class="modal-form" id="rememberForm">
+        <div class="form-group">
+          <label for="rememberName">Full Name</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="rememberName" name="name" placeholder="Enter your full name" required />
+          </div>
+        </div>
+
+        <div class="contact-switch-wrapper">
+          <label class="switch-label">Choose Contact Method:</label>
+          <div class="contact-switch-pills" role="tablist">
+            <button type="button" class="switch-pill active" id="tabPhoneBtn" data-tab="phone" role="tab" aria-selected="true">
+              <i class="fab fa-whatsapp"></i> WhatsApp / Phone
+            </button>
+            <button type="button" class="switch-pill" id="tabEmailBtn" data-tab="email" role="tab" aria-selected="false">
+              <i class="fas fa-envelope"></i> Email Address
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group contact-field" id="fieldPhoneGroup">
+          <label for="rememberPhone">Mobile / WhatsApp Number</label>
+          <div class="input-phone-group">
+            <span class="phone-prefix">+92</span>
+            <input 
+              type="tel" 
+              id="rememberPhone" 
+              name="phone" 
+              placeholder="0307 1771829 or 307 1771829" 
+              maxlength="11" 
+              inputmode="numeric" 
+            />
+          </div>
+          <span class="field-hint">Enter 10 or 11 digits (e.g. 0307... ya 307...)</span>
+        </div>
+
+        <div class="form-group contact-field" id="fieldEmailGroup" style="display: none;">
+          <label for="rememberEmail">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input 
+              type="email" 
+              id="rememberEmail" 
+              name="email" 
+              placeholder="name@gmail.com" 
+            />
+          </div>
+        </div>
+
+        <div class="modal-error-msg" id="rememberError" style="display: none;"></div>
+
+        <button type="submit" class="btn btn-primary btn-modal-submit">
+          <i class="fas fa-check-circle"></i> Claim VIP Voucher & Remember Me
+        </button>
+      </form>
+
+      <div class="modal-success" id="rememberSuccess" style="display: none;">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <h4>VIP Access Confirmed!</h4>
+        <p>Your details and browsing preferences have been recorded. Here is your Rs. 500 Voucher Code:</p>
+        <div style="background: #181206; color: #E5C282; padding: 10px; border-radius: 8px; font-weight: 700; margin: 12px 0; font-family: monospace; font-size: 1.1rem;">
+          ERBE-VIP500
+        </div>
+        <a href="#" id="claimOnWhatsAppBtn" target="_blank" class="btn btn-primary" style="margin-top: 10px; background: #25D366; border-color: #25D366;">
+          <i class="fab fa-whatsapp"></i> Chat on WhatsApp to Confirm
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="logo-img" />
+            <div class="logo-text">
+              <span class="logo-brand">ERBE</span>
+              <span class="logo-tagline">Legacy of Time</span>
+            </div>
+          </a>
+          <p>
+            High-quality watches at 20–30% lower than market rates. Check your parcel before paying—complete peace of mind delivered to your doorstep.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h4>Collection</h4>
+          <ul class="footer-links">
+            <li><a href="product.html?id=rolex-date">Rolex Oyster Date (Rs. 1,450)</a></li>
+            <li><a href="product.html?id=tubular-dual">Tubular Dual Sport (Rs. 2,200)</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Customer Care</h4>
+          <ul class="footer-links">
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="https://wa.me/923071771829" target="_blank">WhatsApp Chat (+92 307 177 1829)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 ERBE — Legacy of Time. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="privacy-policy.html">Privacy</a>
+          <a href="terms-and-conditions.html">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main & Product Script -->
+  <script src="js/main.js"></script>
+  <script>
+    // ====================================================
+    // PRODUCT VIEW ENGINE
+    // ====================================================
+    const ERBE_CATALOG = {
+      "rolex-date": {
+        id: "rolex-date",
+        name: "Rolex Oyster Date (Second Copy)",
+        subtitle: "Quartz Movement • Working Date • Stainless Steel",
+        category: "Luxury Tribute Edition",
+        originalPrice: 2400,
+        salePrice: 1450,
+        savePercent: "40% OFF",
+        badge: "Bestseller — Direct Import",
+        variants: [
+          { id: "black-twotone", name: "Black Dial / Two-Tone Gold Chain", img: "images/products/rolex-black-twotone.jpg", color: "#C5A059" },
+          { id: "black-silver", name: "Black Dial / Silver Chain", img: "images/products/rolex-black-silver.jpg", color: "#A3A3A3" },
+          { id: "blue-silver", name: "Sunray Blue Dial / Silver Chain", img: "images/products/rolex-blue-silver.jpg", color: "#1E3A8A" },
+          { id: "green-twotone", name: "Hulk Green Dial / Two-Tone Gold Chain", img: "images/products/rolex-green-twotone.jpg", color: "#065F46" },
+          { id: "green-silver", name: "Emerald Green Dial / Silver Chain", img: "images/products/rolex-green-silver.jpg", color: "#10B981" },
+          { id: "royalblue-twotone", name: "Royal Blue Dial / Two-Tone Gold Chain", img: "images/products/rolex-royalblue-twotone.jpg", color: "#1D4ED8" },
+          { id: "white-twotone", name: "Ivory White Dial / Two-Tone Gold Chain", img: "images/products/rolex-white-twotone.jpg", color: "#F3F4F6" }
+        ],
+        specs: [
+          { key: "Movement", val: "Precision Japanese Quartz (Battery Installed)" },
+          { key: "Date Function", val: "Active Calendar Window with Cyclops Magnifier" },
+          { key: "Strap / Chain", val: "High-Grade Stainless Steel with Safety Deployment Clasp" },
+          { key: "Bezel", val: "Iconic Fluted Luxury Bezel" },
+          { key: "Glass", val: "Scratch-Resistant Mineral Hardened Crystal" },
+          { key: "Inspection", val: "Open Parcel Inspection Allowed before Paying COD" }
+        ],
+        features: [
+          "Date window with magnifier working",
+          "Water resistant for daily splash use",
+          "Polished two-tone & silver finish",
+          "Comfortable ergonomic link bracelet"
+        ]
+      },
+      "tubular-dual": {
+        id: "tubular-dual",
+        name: "Tubular Dual Display Sport (Original)",
+        subtitle: "Analogue + Digital LCD • Genuine Leather • Heavy Finishing",
+        category: "Original Brand Import",
+        originalPrice: 3500,
+        salePrice: 2200,
+        savePercent: "37% OFF",
+        badge: "Original Brand • Factory Direct",
+        variants: [
+          { id: "brown-white", name: "Brown Leather Belt / White Dial", img: "images/products/tubular-brown-white.jpg", color: "#78350F" },
+          { id: "lightbrown-black", name: "Light Brown Belt / Black Dial", img: "images/products/tubular-lightbrown-black.jpg", color: "#D97706" },
+          { id: "black-black", name: "Black Leather Belt / Black Dial", img: "images/products/tubular-black-black.jpg", color: "#1F2937" }
+        ],
+        specs: [
+          { key: "Brand Authenticity", val: "Original Tubular Timepiece" },
+          { key: "Dual Movement", val: "Independent Analogue Hands + Digital LCD Screen" },
+          { key: "Functions", val: "Stopwatch / Chrono, Daily Alarm, Day & Date Calendar" },
+          { key: "Strap Material", val: "Heavy Genuine Leather with Durable Reinforced Stitching" },
+          { key: "Back Cover", val: "Stainless Steel Laser-Engraved Case Back" },
+          { key: "Inspection", val: "Open Parcel Inspection Allowed before Paying COD" }
+        ],
+        features: [
+          "Dual display (Analogue + Digital working)",
+          "Stopwatch, Alarm & Calendar active",
+          "Genuine stitched leather strap",
+          "Heavy tactical build & masculine finish"
+        ]
+      }
+    };
+
+    // Determine current product from URL param
+    const urlParams = new URLSearchParams(window.location.search);
+    const prodParam = urlParams.get('id');
+    const currentProdId = prodParam === 'tubular-dual' ? 'tubular-dual' : 'rolex-date';
+    const prod = ERBE_CATALOG[currentProdId];
+
+    // Highlight switcher pill
+    if (currentProdId === 'tubular-dual') {
+      document.getElementById('pillTubular')?.classList.add('active');
+    } else {
+      document.getElementById('pillRolex')?.classList.add('active');
+    }
+
+    // Populate Product Information
+    document.title = `${prod.name} — ERBE Legacy of Time`;
+    document.getElementById('breadcrumbCurrent').textContent = prod.name;
+    document.getElementById('productTitle').textContent = prod.name;
+    document.getElementById('productSubtitle').textContent = prod.subtitle;
+    document.getElementById('productCategory').textContent = prod.category;
+    document.getElementById('productBadgeTag').textContent = prod.badge;
+    document.getElementById('displayPrice').textContent = `Rs. ${prod.salePrice.toLocaleString()}`;
+    document.getElementById('displayOriginalPrice').textContent = `Rs. ${prod.originalPrice.toLocaleString()}`;
+    document.getElementById('displaySavePercent').textContent = prod.savePercent;
+
+    // Render Specs Table
+    const specsTable = document.getElementById('specsTable');
+    specsTable.innerHTML = prod.specs.map(s => `
+      <tr>
+        <td class="spec-key">${s.key}</td>
+        <td class="spec-val">${s.val}</td>
+      </tr>
+    `).join('');
+
+    // Render Feature Bullets
+    const featureBullets = document.getElementById('featureBullets');
+    featureBullets.innerHTML = prod.features.map(f => `
+      <div class="bullet-item">
+        <i class="fas fa-check-circle"></i>
+        <span>${f}</span>
+      </div>
+    `).join('');
+
+    // State for active variant
+    let activeVariant = prod.variants[0];
+
+    // Render Swatches & Thumbnails
+    const swatchesContainer = document.getElementById('swatchesContainer');
+    const thumbnailGallery = document.getElementById('thumbnailGallery');
+    const mainGalleryImg = document.getElementById('mainGalleryImg');
+    const selectedVariantText = document.getElementById('selectedVariantText');
+
+    function setActiveVariant(v) {
+      activeVariant = v;
+      mainGalleryImg.src = v.img;
+      selectedVariantText.textContent = v.name;
+
+      // Update swatch active state
+      document.querySelectorAll('.swatch-chip').forEach(el => {
+        el.classList.toggle('active', el.dataset.vid === v.id);
+      });
+
+      // Update thumbnail active state
+      document.querySelectorAll('.thumb-btn').forEach(el => {
+        el.classList.toggle('active', el.dataset.vid === v.id);
+      });
+
+      // Notify Journey Tracker
+      if (window.ERBETracker && window.ERBETracker.setProductVariant) {
+        window.ERBETracker.setProductVariant(v.name);
+      }
+    }
+
+    // Populate Variant Buttons
+    swatchesContainer.innerHTML = prod.variants.map((v, idx) => `
+      <button type="button" class="swatch-chip ${idx === 0 ? 'active' : ''}" data-vid="${v.id}">
+        <span class="color-circle" style="background-color: ${v.color};"></span>
+        <span>${v.name}</span>
+      </button>
+    `).join('');
+
+    thumbnailGallery.innerHTML = prod.variants.map((v, idx) => `
+      <button type="button" class="thumb-btn ${idx === 0 ? 'active' : ''}" data-vid="${v.id}" title="${v.name}">
+        <img src="${v.img}" alt="${v.name}" />
+      </button>
+    `).join('');
+
+    // Event listeners for variant clicks
+    document.querySelectorAll('.swatch-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const vid = chip.dataset.vid;
+        const found = prod.variants.find(v => v.id === vid);
+        if (found) setActiveVariant(found);
+      });
+    });
+
+    document.querySelectorAll('.thumb-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vid = btn.dataset.vid;
+        const found = prod.variants.find(v => v.id === vid);
+        if (found) setActiveVariant(found);
+      });
+    });
+
+    // Initialize with first variant
+    setActiveVariant(prod.variants[0]);
+
+    // ====================================================
+    // 1-TAP WHATSAPP VOUCHER ORDER ACTION
+    // ====================================================
+    const btnOrderWhatsApp = document.getElementById('btnOrderWhatsApp');
+    const voucherPopup = document.getElementById('voucherPopup');
+    const closeVoucherPopup = document.getElementById('closeVoucherPopup');
+    const modalWatchSummary = document.getElementById('modalWatchSummary');
+    const modalVariantSummary = document.getElementById('modalVariantSummary');
+    const modalPriceSummary = document.getElementById('modalPriceSummary');
+    const modalWhatsAppDirectBtn = document.getElementById('modalWhatsAppDirectBtn');
+
+    btnOrderWhatsApp.addEventListener('click', async () => {
+      // 1. Gather Customer info if previously saved in Remember Me
+      let savedCustomer = {};
+      try {
+        const raw = localStorage.getItem('erbe_saved_customer');
+        if (raw) savedCustomer = JSON.parse(raw);
+      } catch (e) {}
+
+      // 2. Prepare Lead Payload with full Journey Dossier
+      const dossier = window.ERBETracker ? window.ERBETracker.getDossier() : 'Product View Direct';
+      const orderLeadData = {
+        name: savedCustomer.name || 'WhatsApp Order Intent',
+        phone: savedCustomer.phone || null,
+        email: savedCustomer.email || null,
+        product: prod.name,
+        variant: activeVariant.name,
+        price: prod.salePrice,
+        source: `whatsapp_voucher: ${prod.name} [${activeVariant.name}] | ${dossier}`
+      };
+
+      // 3. Save Lead to Supabase Cloud
+      try {
+        fetch('https://ajqgdcywqdpnrckghyax.supabase.co/rest/v1/leads', {
+          method: 'POST',
+          headers: {
+            'apikey': 'sb_publishable_lHvCsS1U7kPOPlPVLLSpmA_k8ZbPxKv',
+            'Authorization': 'Bearer sb_publishable_lHvCsS1U7kPOPlPVLLSpmA_k8ZbPxKv',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            name: orderLeadData.name,
+            phone: orderLeadData.phone,
+            email: orderLeadData.email,
+            source: orderLeadData.source
+          })
+        }).catch(() => {});
+      } catch (e) {}
+
+      // 4. Track Conversion in Meta Pixel & GA4
+      try {
+        if (typeof fbq === 'function') {
+          fbq('track', 'InitiateCheckout', {
+            content_name: prod.name,
+            content_category: prod.category,
+            value: prod.salePrice,
+            currency: 'PKR'
+          });
+        }
+        if (typeof gtag === 'function') {
+          gtag('event', 'begin_checkout', {
+            items: [{ item_name: prod.name, item_variant: activeVariant.name, price: prod.salePrice }],
+            currency: 'PKR',
+            value: prod.salePrice
+          });
+        }
+      } catch (e) {}
+
+      // 5. Generate luxury WhatsApp text with visitor journey
+      const whatsappMsg = window.ERBETracker ? 
+        window.ERBETracker.getWhatsAppText(orderLeadData) : 
+        `Assalam o Alaikum ERBE! Mujhe ye watch 1-Tap Voucher ke sath order karni hai: ${prod.name} (${activeVariant.name}) - Rs. ${prod.salePrice}`;
+
+      const whatsappUrl = `https://wa.me/923071771829?text=${encodeURIComponent(whatsappMsg)}`;
+
+      // 6. Populate Voucher Popup
+      modalWatchSummary.textContent = prod.name;
+      modalVariantSummary.textContent = activeVariant.name;
+      modalPriceSummary.textContent = `Rs. ${prod.salePrice.toLocaleString()} (Cash on Delivery)`;
+      modalWhatsAppDirectBtn.href = whatsappUrl;
+
+      // 7. Show Modal and trigger WhatsApp
+      voucherPopup.classList.add('active');
+      window.open(whatsappUrl, '_blank');
+    });
+
+    closeVoucherPopup?.addEventListener('click', () => {
+      voucherPopup.classList.remove('active');
+    });
+
+    // Quick Remember Me trigger
+    document.getElementById('btnRememberQuick')?.addEventListener('click', () => {
+      const rememberModal = document.getElementById('rememberModal');
+      if (rememberModal) {
+        rememberModal.classList.add('active');
+        rememberModal.setAttribute('aria-hidden', 'false');
+      }
+    });
+
+    // Update Remember Me confirmation button to open WhatsApp with journey
+    const claimOnWhatsAppBtn = document.getElementById('claimOnWhatsAppBtn');
+    if (claimOnWhatsAppBtn) {
+      claimOnWhatsAppBtn.addEventListener('click', () => {
+        let savedCustomer = {};
+        try {
+          const raw = localStorage.getItem('erbe_saved_customer');
+          if (raw) savedCustomer = JSON.parse(raw);
+        } catch (e) {}
+
+        const text = window.ERBETracker ? 
+          window.ERBETracker.getWhatsAppText({
+            name: savedCustomer.name,
+            phone: savedCustomer.phone,
+            product: prod.name,
+            variant: activeVariant.name,
+            price: prod.salePrice
+          }) : 
+          `Assalam o Alaikum ERBE! Maine VIP Remember Me join kiya hai. Mera Rs. 500 discount voucher confirm karein.`;
+
+        claimOnWhatsAppBtn.href = `https://wa.me/923071771829?text=${encodeURIComponent(text)}`;
+      });
+    }
+
+  </script>
+</body>
+</html>

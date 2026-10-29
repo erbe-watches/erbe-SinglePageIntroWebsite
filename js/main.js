@@ -358,12 +358,15 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('erbe_saved_customer', JSON.stringify(customerData));
       sessionStorage.setItem('erbe_remember_dismissed', 'true');
 
-      // 2. Push to Supabase Cloud Database
+      // 2. Fetch Visitor Journey Dossier
+      const dossier = window.ERBETracker ? window.ERBETracker.getDossier() : 'Direct Visit';
+
+      // 3. Push to Supabase Cloud Database with full Journey Dossier
       await saveLeadToSupabase({
         name,
         phone: normalizedPhone,
         email: normalizedEmail,
-        source: 'remember_modal'
+        source: `remember_modal | ${dossier}`
       });
 
       if (submitBtn) {
@@ -371,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = originalBtnHtml;
       }
 
-      // 3. Track Conversion in Meta Pixel & GA4
+      // 4. Track Conversion in Meta Pixel & GA4
       try {
         if (typeof fbq === 'function') {
           fbq('track', 'Lead', {
@@ -389,21 +392,25 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('Analytics tracking error:', trackErr);
       }
 
-      // 4. Hide form and show success state
+      // 5. Setup 1-Tap WhatsApp Claim Link with Visitor Journey
+      const claimOnWhatsAppBtn = document.querySelector('#claimOnWhatsAppBtn');
+      if (claimOnWhatsAppBtn) {
+        const text = window.ERBETracker ? 
+          window.ERBETracker.getWhatsAppText({
+            name: name,
+            phone: normalizedPhone,
+            email: normalizedEmail
+          }) : 
+          `Assalam o Alaikum ERBE! Maine VIP Remember Me join kiya hai:\nName: ${name}\nPhone: ${normalizedPhone || normalizedEmail}\nMera Rs. 500 Discount Voucher (ERBE-VIP500) confirm karein.`;
+
+        claimOnWhatsAppBtn.href = `https://wa.me/923071771829?text=${encodeURIComponent(text)}`;
+      }
+
+      // 6. Hide form and show success state
       rememberForm.style.display = 'none';
       if (rememberSuccess) {
         rememberSuccess.style.display = 'block';
       }
-
-      // 5. Auto-close after 2.5 seconds
-      setTimeout(() => {
-        closeRememberDialog();
-        setTimeout(() => {
-          rememberForm.reset();
-          rememberForm.style.display = 'block';
-          if (rememberSuccess) rememberSuccess.style.display = 'none';
-        }, 400);
-      }, 2500);
     });
   }
 
