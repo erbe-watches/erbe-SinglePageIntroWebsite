@@ -878,6 +878,7 @@
 
     // State
     let leadsData = [];
+    let pageViewsData = [];
     let trafficChartInstance = null;
     let currentFilter = 'daily';
 
@@ -938,43 +939,56 @@
     // DASHBOARD INITIALIZATION
     // ====================================================
     function initDashboard() {
-      updateKPIs();
-      fetchLeadsFromSupabase();
-      renderTrafficChart('daily');
       setupEventListeners();
+      fetchAllDataFromSupabase();
     }
 
     // ====================================================
-    // SUPABASE LEADS FETCHING
+    // SUPABASE DATA FETCHING (100% REAL LIVE DATA)
     // ====================================================
-    async function fetchLeadsFromSupabase() {
+    async function fetchAllDataFromSupabase() {
       const tableBody = document.getElementById('leadsTableBody');
       const leadsCountEl = document.getElementById('totalLeadsCount');
 
       try {
-        const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads?select=*&order=created_at.desc`, {
+        // 1. Fetch VIP Leads (where source != 'page_view')
+        const leadsRes = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads?source=neq.page_view&order=created_at.desc`, {
           headers: {
             'apikey': SUPABASE_CONFIG.anonKey,
             'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
           }
         });
 
-        if (!response.ok) {
-          throw new Error('Supabase response status: ' + response.status);
+        if (leadsRes.ok) {
+          leadsData = await leadsRes.json();
+          leadsCountEl.textContent = leadsData.length;
+          renderLeadsTable(leadsData);
+        } else {
+          throw new Error('Supabase Leads Error: ' + leadsRes.status);
         }
 
-        leadsData = await response.json();
-        leadsCountEl.textContent = leadsData.length;
-        renderLeadsTable(leadsData);
-        updateKPIs();
+        // 2. Fetch Real Page Views (where source == 'page_view')
+        const viewsRes = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads?source=eq.page_view&select=created_at&order=created_at.asc`, {
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+          }
+        });
+
+        if (viewsRes.ok) {
+          pageViewsData = await viewsRes.json();
+        }
+
+        // Update KPIs and Chart with 100% Real Live Data
+        updateKPIsAndChart();
       } catch (err) {
-        console.error('Failed to fetch leads from Supabase:', err);
+        console.error('Failed to fetch from Supabase:', err);
         tableBody.innerHTML = `
           <tr>
             <td colspan="7" class="empty-state">
               <i class="fas fa-triangle-exclamation" style="color:#D32F2F;"></i>
               <p>Unable to load leads: ${err.message}</p>
-              <button onclick="fetchLeadsFromSupabase()" class="btn-action" style="margin-top:12px;">Retry</button>
+              <button onclick="fetchAllDataFromSupabase()" class="btn-action" style="margin-top:12px;">Retry</button>
             </td>
           </tr>
         `;
@@ -1068,39 +1082,65 @@
     }
 
     // ====================================================
-    // VISITOR ANALYTICS & CHART.JS (DAILY, MONTHLY, YEARLY)
+    // REAL LIVE VISITOR ANALYTICS & CHART.JS
     // ====================================================
-    function getTrafficDatasets() {
-      // Read local visitor log if available
-      let localVisits = 0;
-      try {
-        const analytics = JSON.parse(localStorage.getItem('erbe_analytics') || '{}');
-        const today = new Date().toISOString().split('T')[0];
-        localVisits = (analytics.daily && analytics.daily[today]) ? analytics.daily[today] : 1;
-      } catch (e) { localVisits = 1; }
+    function getRealTrafficDatasets() {
+      const now = new Date();
+
+      // 1. DAILY: Last 7 Days (e.g. 23 Oct to 29 Oct Today)
+      const dailyLabels = [];
+      const dailyCounts = [];
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        const label = (i === 0) ? `${dayNames[d.getDay()]} (Today)` : (i === 1) ? `Yesterday` : `${dayNames[d.getDay()]} ${d.getDate()}`;
+        dailyLabels.push(label);
+
+        const count = pageViewsData.filter(v => v.created_at && v.created_at.startsWith(dateStr)).length;
+        dailyCounts.push(count);
+      }
+
+      // 2. MONTHLY: 12 Months of Current Year
+      const currentYear = now.getFullYear();
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthlyLabels = [];
+      const monthlyCounts = [];
+
+      for (let m = 0; m < 12; m++) {
+        const isCurrent = (m === now.getMonth());
+        monthlyLabels.push(isCurrent ? `${monthNames[m]} (Current)` : monthNames[m]);
+
+        const count = pageViewsData.filter(v => {
+          if (!v.created_at) return false;
+          const vd = new Date(v.created_at);
+          return vd.getFullYear() === currentYear && vd.getMonth() === m;
+        }).length;
+        monthlyCounts.push(count);
+      }
+
+      // 3. YEARLY: Current Year and Previous
+      const yearlyLabels = [`${currentYear - 1}`, `${currentYear} (Active)`];
+      const yearlyCounts = yearlyLabels.map((yrLabel, idx) => {
+        const yr = (idx === 0) ? currentYear - 1 : currentYear;
+        return pageViewsData.filter(v => {
+          if (!v.created_at) return false;
+          return new Date(v.created_at).getFullYear() === yr;
+        }).length;
+      });
 
       return {
-        daily: {
-          labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday (Today)'],
-          data: [142, 198, 235, 310, 285, 420, 380 + localVisits],
-          avg: 285
-        },
-        monthly: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct (Current)'],
-          data: [1850, 2400, 3100, 3950, 4200, 4800, 5600, 6400, 7800, 8950 + localVisits],
-          avg: 4905
-        },
-        yearly: {
-          labels: ['2024 (Pilot Import)', '2025 (Expansion)', '2026 (Direct Luxury ERBE)'],
-          data: [18400, 36900, 64200 + localVisits],
-          avg: 39833
-        }
+        daily: { labels: dailyLabels, data: dailyCounts },
+        monthly: { labels: monthlyLabels, data: monthlyCounts },
+        yearly: { labels: yearlyLabels, data: yearlyCounts }
       };
     }
 
     function renderTrafficChart(filterType) {
       const ctx = document.getElementById('trafficChart').getContext('2d');
-      const datasets = getTrafficDatasets();
+      const datasets = getRealTrafficDatasets();
       const current = datasets[filterType];
 
       // Create gold gradient
@@ -1117,13 +1157,13 @@
         data: {
           labels: current.labels,
           datasets: [{
-            label: filterType.toUpperCase() + ' Visitors',
+            label: filterType.toUpperCase() + ' Real Visitors',
             data: current.data,
             borderColor: '#C5A059',
             borderWidth: 2.5,
             backgroundColor: gradient,
             fill: true,
-            tension: 0.38,
+            tension: 0.35,
             pointBackgroundColor: '#E5C282',
             pointBorderColor: '#0A0805',
             pointBorderWidth: 2,
@@ -1135,9 +1175,7 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: {
-              display: false
-            },
+            legend: { display: false },
             tooltip: {
               backgroundColor: '#140F09',
               titleColor: '#E5C282',
@@ -1148,32 +1186,23 @@
               displayColors: false,
               callbacks: {
                 label: function(context) {
-                  return `  ${context.parsed.y.toLocaleString()} Unique Visitors`;
+                  return `  ${context.parsed.y} Real Unique Visitors`;
                 }
               }
             }
           },
           scales: {
             x: {
-              grid: {
-                color: 'rgba(197, 160, 89, 0.08)'
-              },
-              ticks: {
-                color: '#A89B8C',
-                font: { family: 'Inter', size: 11 }
-              }
+              grid: { color: 'rgba(197, 160, 89, 0.08)' },
+              ticks: { color: '#A89B8C', font: { family: 'Inter', size: 11 } }
             },
             y: {
               beginAtZero: true,
-              grid: {
-                color: 'rgba(197, 160, 89, 0.08)'
-              },
+              grid: { color: 'rgba(197, 160, 89, 0.08)' },
               ticks: {
                 color: '#A89B8C',
                 font: { family: 'Inter', size: 11 },
-                callback: function(val) {
-                  return val >= 1000 ? (val / 1000) + 'k' : val;
-                }
+                precision: 0
               }
             }
           }
@@ -1181,24 +1210,44 @@
       });
     }
 
-    function updateKPIs() {
+    function updateKPIsAndChart() {
       const todayEl = document.getElementById('todayVisitorsCount');
       const monthlyEl = document.getElementById('monthlyVisitorsCount');
       const convEl = document.getElementById('conversionRate');
+      const leadsCountEl = document.getElementById('totalLeadsCount');
 
-      const datasets = getTrafficDatasets();
-      const todayVisits = datasets.daily.data[datasets.daily.data.length - 1];
-      const monthlyVisits = datasets.monthly.data[datasets.monthly.data.length - 1];
+      leadsCountEl.textContent = leadsData.length;
 
-      todayEl.textContent = todayVisits.toLocaleString();
-      monthlyEl.textContent = monthlyVisits.toLocaleString();
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
 
-      if (leadsData.length > 0 && todayVisits > 0) {
-        const rate = ((leadsData.length / todayVisits) * 100).toFixed(1);
+      // Real today visitors count from Supabase
+      const todayVisits = pageViewsData.filter(v => v.created_at && v.created_at.startsWith(todayStr)).length;
+
+      // Real monthly traffic count from Supabase
+      const monthlyVisits = pageViewsData.filter(v => {
+        if (!v.created_at) return false;
+        const vd = new Date(v.created_at);
+        return vd.getFullYear() === currentYear && vd.getMonth() === currentMonth;
+      }).length;
+
+      todayEl.textContent = todayVisits;
+      monthlyEl.textContent = monthlyVisits;
+
+      // Real conversion rate: VIP Leads / Total Unique Page Views
+      const totalVisits = pageViewsData.length;
+      if (totalVisits > 0 && leadsData.length > 0) {
+        const rate = ((leadsData.length / totalVisits) * 100).toFixed(1);
         convEl.textContent = rate + '%';
+      } else if (leadsData.length > 0 && totalVisits === 0) {
+        convEl.textContent = '100%';
       } else {
-        convEl.textContent = '4.8%';
+        convEl.textContent = '0.0%';
       }
+
+      renderTrafficChart(currentFilter);
     }
 
     // ====================================================
@@ -1243,7 +1292,7 @@
       document.getElementById('refreshBtn').addEventListener('click', () => {
         const icon = document.querySelector('#refreshBtn i');
         icon.classList.add('fa-spin');
-        fetchLeadsFromSupabase().finally(() => {
+        fetchAllDataFromSupabase().finally(() => {
           setTimeout(() => icon.classList.remove('fa-spin'), 600);
         });
       });

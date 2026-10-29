@@ -4,20 +4,29 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ---------- Lightweight Visitor Analytics Tracker ----------
+  // ---------- Real-Time Visitor Tracking to Supabase Cloud ----------
   try {
     const today = new Date().toISOString().split('T')[0];
-    const sessionKey = 'erbe_visited_' + today;
+    const sessionKey = 'erbe_cloud_visit_' + today;
     if (!sessionStorage.getItem(sessionKey)) {
-      sessionStorage.setItem(sessionKey, 'true');
-      let analytics = JSON.parse(localStorage.getItem('erbe_analytics') || '{}');
-      if (!analytics.daily) analytics.daily = {};
-      analytics.daily[today] = (analytics.daily[today] || 0) + 1;
-      analytics.total = (analytics.total || 0) + 1;
-      localStorage.setItem('erbe_analytics', JSON.stringify(analytics));
+      sessionStorage.setItem(sessionKey, '1');
+      fetch('https://ajqgdcywqdpnrckghyax.supabase.co/rest/v1/leads', {
+        method: 'POST',
+        headers: {
+          'apikey': 'sb_publishable_lHvCsS1U7kPOPlPVLLSpmA_k8ZbPxKv',
+          'Authorization': 'Bearer sb_publishable_lHvCsS1U7kPOPlPVLLSpmA_k8ZbPxKv',
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          name: 'Site Visitor',
+          phone: 'session_' + Math.random().toString(36).substring(2, 9),
+          source: 'page_view'
+        })
+      }).catch(() => {});
     }
   } catch (e) {
-    /* Safe fallback if private browsing blocks storage */
+    /* Safe fallback */
   }
 
   // ---------- Header Scroll Effect ----------
