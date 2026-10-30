@@ -1,0 +1,14 @@
+# ==============================================================================
+# ERBE — Legacy of Time | Target Facebook URLs for Lead Hunter
+# Paste competitor watch post URLs, reels, or public group post links below.
+# Each URL on a new line. Empty lines or lines starting with '#' are ignored.
+# ==============================================================================
+
+# Example 1: Competitor watch post URL
+# https://www.facebook.com/permalink.php?story_fbid=123456789&id=987654321
+
+# Example 2: Public Watch Group Post (No Join Required)
+# https://www.facebook.com/groups/pakistanwatches/posts/101589123456789/
+
+# Example 3: Viral Watch Video / Reel
+# https://www.facebook.com/watch/?v=11223344556677

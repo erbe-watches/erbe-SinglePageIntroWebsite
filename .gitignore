@@ -1,4 +1,5 @@
 node_modules/
+.fb_session_profile/
 .DS_Store
 Thumbs.db
 *.log
