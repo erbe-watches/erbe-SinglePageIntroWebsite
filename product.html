@@ -300,16 +300,19 @@
     }
 
     .current-price {
-      font-size: 2.3rem;
-      font-weight: 800;
+      font-size: 2.1rem;
+      font-weight: 700;
       color: var(--color-text);
-      font-family: var(--font-heading);
+      font-family: var(--font-body);
+      letter-spacing: -0.5px;
     }
 
     .original-price {
-      font-size: 1.3rem;
+      font-size: 1.15rem;
       color: var(--color-text-dim);
       text-decoration: line-through;
+      font-family: var(--font-body);
+      font-weight: 400;
     }
 
     .save-badge {
@@ -667,7 +670,7 @@
         <div class="alert-ticker-item">
           <span class="alert-pulse"></span>
           <span class="alert-badge-pill">VIP ACCESS</span>
-          <span class="alert-text">Press me to remember your self & get Rs. 500 Voucher</span>
+          <span class="alert-text">Press me to remember your self</span>
           <span class="alert-sep">✦</span>
           <span class="alert-text">20–30% Below Market Rates</span>
           <span class="alert-sep">✦</span>
@@ -738,21 +741,11 @@
             <span class="review-count">(Verified Customer Choice)</span>
           </div>
 
-          <!-- Price & Voucher Box -->
+          <!-- Price Box -->
           <div class="price-box">
             <div class="price-row">
               <span class="current-price" id="displayPrice">Rs. 1,450</span>
               <span class="original-price" id="displayOriginalPrice">Rs. 2,400</span>
-              <span class="save-badge" id="displaySavePercent">40% OFF</span>
-            </div>
-
-            <!-- 1-Tap Voucher Box -->
-            <div class="voucher-callout-card">
-              <div class="voucher-text-wrap">
-                <span class="voucher-title"><i class="fas fa-ticket-alt" style="color: var(--color-gold);"></i> 1-Tap WhatsApp Voucher Activated!</span>
-                <span class="voucher-subtext">Click below to auto-claim Rs. 500 off on your order</span>
-              </div>
-              <div class="voucher-code-pill">ERBE-VIP500</div>
             </div>
           </div>
 
@@ -771,7 +764,7 @@
           <div class="actions-box">
             <button type="button" class="btn-whatsapp-voucher" id="btnOrderWhatsApp">
               <i class="fab fa-whatsapp" style="font-size: 1.4rem;"></i>
-              <span>Order Now on WhatsApp (1-Tap Voucher)</span>
+              <span>Order Now on WhatsApp</span>
             </button>
 
             <button type="button" class="btn-secondary-action" id="btnRememberQuick">
@@ -1059,7 +1052,8 @@
     document.getElementById('productBadgeTag').textContent = prod.badge;
     document.getElementById('displayPrice').textContent = `Rs. ${prod.salePrice.toLocaleString()}`;
     document.getElementById('displayOriginalPrice').textContent = `Rs. ${prod.originalPrice.toLocaleString()}`;
-    document.getElementById('displaySavePercent').textContent = prod.savePercent;
+    const savePercentEl = document.getElementById('displaySavePercent');
+    if (savePercentEl) savePercentEl.textContent = prod.savePercent;
 
     // Render Specs Table
     const specsTable = document.getElementById('specsTable');
