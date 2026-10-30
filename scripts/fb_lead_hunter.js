@@ -376,6 +376,8 @@ async function runScanWorkflow(targetUrlsArg) {
             intentScore: classification.score,
             intentCategory: classification.topCase,
             matchedKeywords: classification.matchedKeywords,
+            groupOrPostName: url.includes('/groups/') ? 'Pakistani Watch Group (Public)' : 'Competitor Watch Post / Reel',
+            fetchReason: `High Buying Intent (${classification.topCase}): Commented "${item.text.slice(0, 80)}" exhibiting direct purchase need.`,
             tier: tier,
             messengerStatus: messengerStatus,
             postUrl: url,

@@ -172,7 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function preventModalScroll(e) {
-    e.preventDefault();
+    if (!e.target.closest('.modal-card')) {
+      e.preventDefault();
+    }
   }
 
   function openRememberDialog() {

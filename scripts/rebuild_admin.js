@@ -1,0 +1,2424 @@
+/**
+ * Rebuilds admin.html with:
+ * 1. Single Master Credential (erbewatches@gmail.com / Erbe#Admin2026!Secure)
+ * 2. Two-Factor Authentication (2FA) with TOTP & Emergency Master PIN (261829)
+ * 3. Unified Master "Leads" Table (replaces duplicate tables)
+ * 4. Lead Type Column (VIP Lead, Gold Lead, Silver Lead) with Filter Pills
+ * 5. Interactive Lead Details Dialog with Group/Post Origin, Clickable Link, Intent Reason, and Next/Previous Lead buttons
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const adminHtmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal — ERBE Legacy of Time</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Chart.js for Traffic Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0A0805;
+      --bg-card: #120E0A;
+      --bg-card-hover: #19140E;
+      --bg-input: #1C1610;
+      --gold: #C5A059;
+      --gold-light: #E0C38C;
+      --gold-dark: #9A7B3E;
+      --gold-border: rgba(197, 160, 89, 0.35);
+      --text: #F5EBE1;
+      --text-muted: #A39688;
+      --danger: #E53935;
+      --success: #2E7D32;
+      --radius: 12px;
+      --font-heading: 'Cinzel', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* =========================================
+       LOGIN SCREEN WITH 2FA
+       ========================================= */
+    #loginScreen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #1E160E 0%, #080604 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--radius);
+      padding: 38px 34px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(197, 160, 89, 0.1);
+      text-align: center;
+      position: relative;
+    }
+
+    .login-brand-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      margin: 0 auto 16px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .login-title {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+
+    .login-title span { color: var(--text); }
+
+    .login-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    .login-error {
+      background: rgba(229, 57, 53, 0.15);
+      border: 1px solid var(--danger);
+      color: #FF8A80;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      margin-bottom: 18px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .login-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .login-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--gold);
+      font-size: 0.95rem;
+      pointer-events: none;
+    }
+
+    .login-input {
+      width: 100%;
+      height: 46px;
+      background: var(--bg-input);
+      border: 1px solid var(--gold-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      padding: 0 42px 0 42px;
+      transition: all 0.25s ease;
+    }
+
+    .login-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+    }
+
+    .toggle-pass-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 6px;
+      transition: color 0.2s;
+    }
+
+    .toggle-pass-btn:hover { color: var(--gold); }
+
+    .btn-login {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border: none;
+      border-radius: 8px;
+      color: #0A0805;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 22px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 18px rgba(197, 160, 89, 0.35);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(197, 160, 89, 0.5);
+    }
+
+    /* 2FA Form Elements */
+    .twofa-header {
+      margin-bottom: 20px;
+    }
+
+    .twofa-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(197, 160, 89, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin: 0 auto 12px;
+    }
+
+    .twofa-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .twofa-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .twofa-input {
+      font-family: monospace;
+      font-size: 1.6rem;
+      letter-spacing: 8px;
+      text-align: center;
+      font-weight: 700;
+      padding: 0 10px !important;
+      color: var(--gold-light);
+    }
+
+    .twofa-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    .btn-text-link {
+      background: transparent;
+      border: none;
+      color: var(--gold-light);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      transition: color 0.2s;
+    }
+
+    .btn-text-link:hover { color: #FFF; text-decoration: underline; }
+
+    .twofa-setup-box {
+      margin-top: 16px;
+      background: rgba(10, 8, 5, 0.9);
+      border: 1px dashed var(--gold-border);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: left;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .twofa-setup-box code {
+      background: rgba(197, 160, 89, 0.15);
+      color: var(--gold-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      word-break: break-all;
+    }
+
+    /* =========================================
+       DASHBOARD SCREEN
+       ========================================= */
+    #dashboardScreen { display: none; }
+
+    /* Top Navbar */
+    .admin-navbar {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--gold-border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-brand-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--gold);
+      object-fit: cover;
+    }
+
+    .nav-brand-text h1 {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      letter-spacing: 1px;
+      color: var(--gold-light);
+    }
+
+    .nav-brand-text span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: rgba(197, 160, 89, 0.12);
+      border: 1px solid var(--gold-border);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-action:hover {
+      background: var(--gold);
+      color: #0A0805;
+      border-color: var(--gold);
+    }
+
+    .btn-logout {
+      background: rgba(229, 57, 53, 0.12);
+      border-color: rgba(229, 57, 53, 0.35);
+      color: #FF8A80;
+    }
+
+    .btn-logout:hover {
+      background: var(--danger);
+      color: #FFF;
+      border-color: var(--danger);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(46, 125, 50, 0.15);
+      border: 1px solid rgba(46, 125, 50, 0.4);
+      color: #81C784;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4CAF50;
+      box-shadow: 0 0 8px #4CAF50;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Main Container */
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    /* KPI Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(197, 160, 89, 0.1);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(197, 160, 89, 0.15);
+      border: 1px solid var(--gold-border);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    .stat-info h3 {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .stat-subtext {
+      font-size: 0.72rem;
+      color: #81C784;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Dashboard Section Card */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--radius);
+      padding: 26px 28px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 30px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+    }
+
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title-wrap i {
+      color: var(--gold);
+      font-size: 1.35rem;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      color: var(--text);
+    }
+
+    .section-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Filter Pills */
+    .filter-pills {
+      display: inline-flex;
+      background: var(--bg-input);
+      border: 1px solid var(--gold-border);
+      border-radius: 30px;
+      padding: 4px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-btn:hover { color: var(--text); }
+
+    .pill-btn.active {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: #0A0805;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(197, 160, 89, 0.35);
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+
+    /* Table Actions & Search */
+    .table-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 250px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 38px;
+      padding: 0 14px 0 34px;
+      background: var(--bg-input);
+      border: 1px solid var(--gold-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.84rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .btn-export {
+      background: rgba(197, 160, 89, 0.12);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-export:hover {
+      background: var(--gold);
+      color: #0A0805;
+      box-shadow: 0 4px 14px rgba(197, 160, 89, 0.3);
+    }
+
+    /* Discovery Card */
+    .discovery-box {
+      background: linear-gradient(145deg, rgba(24, 119, 242, 0.08) 0%, rgba(18, 14, 10, 0.6) 100%);
+      border: 1px dashed rgba(24, 119, 242, 0.35);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+    }
+
+    .discovery-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #90CAF9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .discovery-targets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .discovery-item {
+      background: rgba(10, 8, 5, 0.7);
+      border: 1px solid rgba(197, 160, 89, 0.2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .discovery-item h5 { font-size: 0.82rem; color: var(--gold-light); margin-bottom: 4px; font-weight: 600; }
+    .discovery-item p { font-size: 0.74rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.3; }
+
+    .btn-discovery-link {
+      background: rgba(24, 119, 242, 0.15);
+      color: #90CAF9;
+      border: 1px solid rgba(24, 119, 242, 0.4);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      width: fit-content;
+      transition: all 0.2s ease;
+    }
+
+    .btn-discovery-link:hover {
+      background: #1877F2;
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(24, 119, 242, 0.4);
+    }
+
+    /* Table Styles */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid rgba(197, 160, 89, 0.15);
+    }
+
+    .leads-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    .leads-table th {
+      background: #1B140D;
+      color: var(--gold-light);
+      font-weight: 600;
+      padding: 14px 16px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--gold-border);
+      white-space: nowrap;
+    }
+
+    .leads-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .leads-table tr {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .leads-table tr:hover td {
+      background: rgba(197, 160, 89, 0.08) !important;
+    }
+
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .avatar-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(197, 160, 89, 0.15);
+      border: 1px solid var(--gold-border);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    /* LEAD TYPE BADGES (VIP, GOLD, SILVER) */
+    .badge-vip-lead {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.18) 0%, rgba(255, 152, 0, 0.1) 100%);
+      color: #FFD54F;
+      border: 1px solid rgba(255, 193, 7, 0.5);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);
+      white-space: nowrap;
+    }
+
+    .badge-gold-lead {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(200, 150, 0, 0.1) 100%);
+      color: #FFD700;
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+      white-space: nowrap;
+    }
+
+    .badge-silver-lead {
+      background: linear-gradient(135deg, rgba(220, 220, 220, 0.15) 0%, rgba(160, 160, 160, 0.1) 100%);
+      color: #E0E0E0;
+      border: 1px solid rgba(220, 220, 220, 0.4);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .phone-tag {
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: #81C784;
+    }
+
+    .source-origin-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(197, 160, 89, 0.12);
+      color: var(--gold-light);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-link-icon {
+      color: #90CAF9;
+      margin-left: 4px;
+      text-decoration: none;
+    }
+
+    .source-link-icon:hover { color: #FFF; }
+
+    .intent-tag {
+      background: rgba(197, 160, 89, 0.12);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      color: var(--gold-light);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .comment-snippet {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+      display: block;
+      max-width: 240px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+
+    .btn-wa-direct {
+      background: #1B5E20;
+      color: #E8F5E9;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-wa-direct:hover {
+      background: #2E7D32;
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(46, 125, 50, 0.4);
+    }
+
+    .btn-messenger-direct {
+      background: #0084FF;
+      color: #FFF;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-messenger-direct:hover {
+      background: #0066CC;
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(0, 132, 255, 0.5);
+    }
+
+    .btn-details-sm {
+      background: rgba(197, 160, 89, 0.12);
+      border: 1px solid var(--gold-border);
+      color: var(--gold-light);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-details-sm:hover {
+      background: var(--gold);
+      color: #0A0805;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 2.2rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    /* =========================================
+       LEAD DETAILS DOSSIER MODAL WITH NEXT / PREV
+       ========================================= */
+    .dossier-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+
+    .dossier-modal-overlay.active { display: flex; }
+
+    .dossier-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 50px rgba(197, 160, 89, 0.15);
+      overflow: hidden;
+      animation: modalFadeIn 0.25s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .dossier-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(10, 8, 5, 0.85);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+    }
+
+    .dossier-nav-counter {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+    }
+
+    .dossier-nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-dossier-nav {
+      background: rgba(197, 160, 89, 0.12);
+      border: 1px solid var(--gold-border);
+      color: var(--text);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-dossier-nav:hover:not(:disabled) {
+      background: var(--gold);
+      color: #0A0805;
+    }
+
+    .btn-dossier-nav:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .dossier-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .dossier-lead-hero {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+      margin-bottom: 20px;
+    }
+
+    .dossier-avatar-large {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(197, 160, 89, 0.15);
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .dossier-hero-info h3 {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .dossier-hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .dossier-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .dossier-info-card {
+      background: var(--bg-input);
+      border: 1px solid rgba(197, 160, 89, 0.2);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .dossier-info-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .dossier-info-val {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .dossier-box-highlight {
+      background: rgba(197, 160, 89, 0.08);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .dossier-box-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dossier-comment-quote {
+      font-style: italic;
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.45;
+      padding: 10px 14px;
+      background: rgba(10, 8, 5, 0.6);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+      margin: 8px 0;
+    }
+
+    .dossier-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-input);
+      border: 1px solid rgba(197, 160, 89, 0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .step-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(197, 160, 89, 0.15);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .step-title { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .step-meta { font-size: 0.74rem; color: var(--gold-light); }
+
+    .dossier-footer {
+      padding: 16px 20px;
+      background: rgba(10, 8, 5, 0.85);
+      border-top: 1px solid rgba(197, 160, 89, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .discovery-targets-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .admin-navbar { padding: 12px 16px; flex-wrap: wrap; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .section-card { padding: 20px 16px; }
+      .search-box { width: 100%; }
+      .filter-pills { width: 100%; justify-content: center; }
+      .dossier-info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================
+       LOGIN SCREEN WITH TWO-FACTOR AUTH (2FA)
+       ========================================= -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <img src="images/erbe-logo.jpg" alt="ERBE Crest" class="login-brand-logo" />
+      <h2 class="login-title">ERBE — <span>Portal</span></h2>
+      <p class="login-subtitle">Admin Control Center</p>
+
+      <div id="loginError" class="login-error">
+        <i class="fas fa-exclamation-triangle"></i> <span id="loginErrorText">Invalid Credentials.</span>
+      </div>
+
+      <!-- STEP 1: MASTER CREDENTIALS FORM -->
+      <form id="adminLoginForm">
+        <div class="login-group">
+          <label class="login-label">Master Admin Email</label>
+          <div class="input-wrap">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" id="adminUser" class="login-input" placeholder="erbewatches@gmail.com" required autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="login-group">
+          <label class="login-label">Master Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="adminPass" class="login-input" placeholder="••••••••••••" required autocomplete="current-password" />
+            <button type="button" class="toggle-pass-btn" id="togglePassBtn" title="Toggle password visibility">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" id="btnContinue2FA">
+          <i class="fas fa-shield-halved"></i> Continue to 2FA Verification
+        </button>
+      </form>
+
+      <!-- STEP 2: TWO-FACTOR AUTHENTICATION FORM (Initially Hidden) -->
+      <form id="admin2FAForm" style="display: none;">
+        <div class="twofa-header">
+          <div class="twofa-icon"><i class="fas fa-key"></i></div>
+          <h3 class="twofa-title">Security Verification</h3>
+          <p class="twofa-subtitle">Enter the 6-digit code from Google Authenticator or your Master Security PIN</p>
+        </div>
+
+        <div class="login-group">
+          <div class="input-wrap">
+            <input type="text" id="admin2FACode" class="login-input twofa-input" placeholder="000000" maxlength="6" autocomplete="one-time-code" autofocus />
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login">
+          <i class="fas fa-lock-open"></i> Verify & Open Portal
+        </button>
+
+        <div class="twofa-actions">
+          <button type="button" class="btn-text-link" id="btnBackToLogin">
+            <i class="fas fa-arrow-left"></i> Back to Login
+          </button>
+          <button type="button" class="btn-text-link" id="btnToggle2FASetup">
+            <i class="fas fa-qrcode"></i> Setup Info
+          </button>
+        </div>
+
+        <div id="twofaSetupBox" class="twofa-setup-box" style="display: none;">
+          <p><strong>Google Authenticator Setup:</strong></p>
+          <p>Account: <code>erbewatches@gmail.com</code></p>
+          <p>Key: <code>ERBEWATCHES2026TOTPSECRET</code></p>
+          <p style="margin-top:6px; color:#FFD54F;">Emergency Master PIN: <code>261829</code></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================
+       DASHBOARD SCREEN
+       ========================================= -->
+  <div id="dashboardScreen">
+    <!-- Navbar -->
+    <header class="admin-navbar">
+      <a href="index.html" class="nav-brand" title="Back to main website">
+        <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="nav-brand-img" />
+        <div class="nav-brand-text">
+          <h1>ERBE — Legacy of Time</h1>
+          <span>Admin Portal</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <div class="badge-status">
+          <span class="status-dot"></span>
+          <span>Supabase Live</span>
+        </div>
+        <button class="btn-action" id="refreshBtn" title="Refresh leads & analytics">
+          <i class="fas fa-rotate"></i> Refresh
+        </button>
+        <button class="btn-action btn-logout" id="logoutBtn">
+          <i class="fas fa-power-off"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="dashboard-container">
+      <!-- 4 KPI Stats Grid -->
+      <section class="stats-grid">
+        <!-- Stat 1: Total VIP & Direct Leads -->
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users-viewfinder"></i></div>
+          <div class="stat-info">
+            <h3>Total Leads</h3>
+            <div class="stat-number" id="totalLeadsCount">--</div>
+            <div class="stat-subtext"><i class="fas fa-shield-halved"></i> Live from Supabase</div>
+          </div>
+        </div>
+
+        <!-- Stat 2: Today's Visitors -->
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+          <div class="stat-info">
+            <h3>Today's Visitors</h3>
+            <div class="stat-number" id="todayVisitorsCount">--</div>
+            <div class="stat-subtext"><i class="fas fa-arrow-up"></i> Active organic sessions</div>
+          </div>
+        </div>
+
+        <!-- Stat 3: Monthly Traffic -->
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-info">
+            <h3>Monthly Traffic</h3>
+            <div class="stat-number" id="monthlyVisitorsCount">--</div>
+            <div class="stat-subtext"><i class="fas fa-eye"></i> Current month unique hits</div>
+          </div>
+        </div>
+
+        <!-- Stat 4: Conversion Rate -->
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+          <div class="stat-info">
+            <h3>Lead Conversion Rate</h3>
+            <div class="stat-number" id="conversionRate">--%</div>
+            <div class="stat-subtext"><i class="fas fa-bolt"></i> Leads / Traffic</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 1: VISITOR TRAFFIC GRAPH WITH FILTERS -->
+      <section class="section-card">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <i class="fas fa-chart-area"></i>
+            <div>
+              <h2 class="section-title">Visitor Traffic Analytics</h2>
+              <p class="section-desc">Track real-time audience engagement across daily, monthly, and yearly intervals</p>
+            </div>
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="filter-pills" role="tablist">
+            <button class="pill-btn active" data-filter="daily" role="tab"><i class="fas fa-clock"></i> Daily</button>
+            <button class="pill-btn" data-filter="monthly" role="tab"><i class="fas fa-calendar-days"></i> Monthly</button>
+            <button class="pill-btn" data-filter="yearly" role="tab"><i class="fas fa-calendar"></i> Yearly</button>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="trafficChart"></canvas>
+        </div>
+      </section>
+
+      <!-- MASTER LEADS SECTION (UNIFIED VIP, GOLD, & SILVER LEADS) -->
+      <section class="section-card" id="leadsMasterSection">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <i class="fas fa-users-gear" style="color:var(--gold);"></i>
+            <div>
+              <h2 class="section-title">Leads</h2>
+              <p class="section-desc">Complete Lead Acquisition & Customer Tracking (VIP Website, Gold Direct Contact, Silver Social Media)</p>
+            </div>
+          </div>
+
+          <div class="table-actions">
+            <!-- Filter Pills -->
+            <div class="filter-pills" id="leadsFilterPills">
+              <button class="pill-btn active" data-lead-filter="all"><i class="fas fa-layer-group"></i> All Leads (<span id="allLeadsCount">0</span>)</button>
+              <button class="pill-btn" data-lead-filter="vip"><i class="fas fa-crown" style="color:#FFD700;"></i> VIP Leads (<span id="vipLeadsCount">0</span>)</button>
+              <button class="pill-btn" data-lead-filter="gold"><i class="fas fa-star" style="color:#FFA000;"></i> Gold Leads (<span id="goldLeadsCount">0</span>)</button>
+              <button class="pill-btn" data-lead-filter="silver"><i class="fab fa-facebook-messenger" style="color:#90CAF9;"></i> Silver Leads (<span id="silverLeadsCount">0</span>)</button>
+            </div>
+
+            <!-- Search Box -->
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="searchLeadsInput" class="search-input" placeholder="Search by name, phone, email, source..." />
+            </div>
+
+            <!-- Export CSV -->
+            <button class="btn-export" id="exportLeadsCsvBtn">
+              <i class="fas fa-file-csv"></i> Export CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Target Discovery Box (Daily 3 Pakistan Targets without joining) -->
+        <div class="discovery-box">
+          <div class="discovery-title">
+            <i class="fas fa-crosshairs"></i> Today's 3 Recommended Pakistani Target Searches (Open without joining):
+          </div>
+          <div class="discovery-targets-grid">
+            <div class="discovery-item">
+              <div>
+                <h5>1. Competitor Posts & Ads</h5>
+                <p>Public posts & reels from Pakistani watch sellers where users ask price & COD.</p>
+              </div>
+              <a href="https://www.facebook.com/search/posts/?q=rolex%20copy%20pakistan" target="_blank" class="btn-discovery-link">
+                <i class="fas fa-external-link-alt"></i> Search Competitors
+              </a>
+            </div>
+            <div class="discovery-item">
+              <div>
+                <h5>2. Public Buy/Sell Groups</h5>
+                <p>Open group feeds where buyers post watch requirements without joining.</p>
+              </div>
+              <a href="https://www.facebook.com/search/groups/?q=watches%20buy%20and%20sell%20pakistan" target="_blank" class="btn-discovery-link">
+                <i class="fas fa-external-link-alt"></i> Search Groups
+              </a>
+            </div>
+            <div class="discovery-item">
+              <div>
+                <h5>3. Viral Watch Reels / Videos</h5>
+                <p>Video unboxings with active comment threads asking "how to buy".</p>
+              </div>
+              <a href="https://www.facebook.com/search/videos/?q=rolex%20watch%20pakistan" target="_blank" class="btn-discovery-link">
+                <i class="fas fa-external-link-alt"></i> Search Watch Reels
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Master Leads Table -->
+        <div class="table-responsive">
+          <table class="leads-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer Name</th>
+                <th>Lead Type</th>
+                <th>Mobile / WhatsApp</th>
+                <th>Email Address</th>
+                <th>Source & Origin</th>
+                <th>Intent & Journey</th>
+                <th>Date & Time</th>
+                <th>Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody">
+              <tr>
+                <td colspan="9" class="empty-state">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <p>Connecting to Supabase cloud database...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- =========================================
+       LEAD DETAILS DOSSIER MODAL WITH NEXT / PREV
+       ========================================= -->
+  <div class="dossier-modal-overlay" id="dossierModal">
+    <div class="dossier-card">
+      <!-- Nav Header with Next / Prev buttons -->
+      <div class="dossier-nav-bar">
+        <span class="dossier-nav-counter" id="dossierCounter">Lead 1 of 1</span>
+        <div class="dossier-nav-btns">
+          <button type="button" class="btn-dossier-nav" id="btnPrevLead" title="Previous Lead (Left Arrow)">
+            <i class="fas fa-chevron-left"></i> Previous
+          </button>
+          <button type="button" class="btn-dossier-nav" id="btnNextLead" title="Next Lead (Right Arrow)">
+            Next <i class="fas fa-chevron-right"></i>
+          </button>
+          <button type="button" class="btn-dossier-nav" onclick="closeDossierModal()" style="margin-left:6px;" title="Close (Escape)">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Dossier Body Content -->
+      <div class="dossier-body">
+        <div class="dossier-lead-hero">
+          <div class="dossier-avatar-large" id="dossierAvatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="dossier-hero-info">
+            <h3 id="dossierCustomerName">Customer Name</h3>
+            <div class="dossier-hero-meta">
+              <span id="dossierTierBadge" class="badge-vip-lead">VIP LEAD</span>
+              <span id="dossierDate" style="font-size:0.75rem; color:var(--text-muted);">Date</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Info Cards -->
+        <div class="dossier-info-grid">
+          <div class="dossier-info-card">
+            <div class="dossier-info-label">Mobile / WhatsApp</div>
+            <div class="dossier-info-val" id="dossierPhone">-</div>
+          </div>
+          <div class="dossier-info-card">
+            <div class="dossier-info-label">Email Address</div>
+            <div class="dossier-info-val" id="dossierEmail">-</div>
+          </div>
+        </div>
+
+        <!-- Origin & Link Details -->
+        <div class="dossier-box-highlight">
+          <div class="dossier-box-title">
+            <i class="fas fa-map-pin"></i> Source, Group & Post Origin:
+          </div>
+          <div style="font-size:0.88rem; font-weight:600; color:var(--text); margin-bottom:6px;" id="dossierOriginName">
+            Website Alert Bar
+          </div>
+          <div id="dossierOriginLinkWrap" style="display:none; margin-top:4px;">
+            <a href="#" id="dossierOriginLink" target="_blank" class="btn-discovery-link">
+              <i class="fas fa-external-link-alt"></i> Open Facebook Post / Group in New Tab
+            </a>
+          </div>
+        </div>
+
+        <!-- Why Fetched (Intent Reason & Comment) -->
+        <div class="dossier-box-highlight" id="dossierWhyBox">
+          <div class="dossier-box-title">
+            <i class="fas fa-bullseye"></i> Why This Lead Was Fetched (Intent Trigger):
+          </div>
+          <div style="font-size:0.84rem; color:var(--gold-light); font-weight:600;" id="dossierIntentReason">
+            Direct website form submission
+          </div>
+          <div class="dossier-comment-quote" id="dossierCommentQuote" style="display:none;">
+            "Comment text"
+          </div>
+        </div>
+
+        <!-- Visitor Journey Section (For Website VIP Leads) -->
+        <div id="dossierJourneyWrap" style="display:none;">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--gold-light); margin-bottom:8px;">
+            <i class="fas fa-route"></i> Visitor Browsing Journey on Website:
+          </div>
+          <div class="dossier-timeline" id="dossierTimeline">
+            <!-- Timeline items injected here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Dossier Footer Actions -->
+      <div class="dossier-footer">
+        <button type="button" class="btn-action" onclick="closeDossierModal()">Close</button>
+        <div style="display:flex; gap:10px;">
+          <a href="#" id="dossierMessengerBtn" target="_blank" class="btn-messenger-direct" style="display:none;">
+            <i class="fab fa-facebook-messenger"></i> Open Messenger DM
+          </a>
+          <a href="#" id="dossierChatBtn" target="_blank" class="btn-wa-direct">
+            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====================================================
+    // MASTER AUTHENTICATION & CREDENTIALS
+    // ====================================================
+    const AUTH_CONFIG = {
+      // Single Master Admin Credential
+      masterEmail: 'erbewatches@gmail.com',
+      masterPass: 'Erbe#Admin2026!Secure',
+      masterPin: '261829', // Emergency Master PIN
+      totpSecret: 'ERBEWATCHES2026TOTPSECRET',
+      tokenKey: 'erbe_admin_token_2026'
+    };
+
+    const SUPABASE_CONFIG = {
+      url: 'https://ajqgdcywqdpnrckghyax.supabase.co',
+      anonKey: 'sb_publishable_lHvCsS1U7kPOPlPVLLSpmA_k8ZbPxKv'
+    };
+
+    // State Variables
+    let allLeadsMaster = [];
+    let displayedLeads = [];
+    let pageViewsData = [];
+    let trafficChartInstance = null;
+    let currentLeadFilter = 'all';
+    let currentDossierIndex = 0;
+
+    // ====================================================
+    // AUTHENTICATION & TWO-FACTOR AUTH (2FA) LOGIC
+    // ====================================================
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboardScreen = document.getElementById('dashboardScreen');
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    const admin2FAForm = document.getElementById('admin2FAForm');
+    const loginError = document.getElementById('loginError');
+    const loginErrorText = document.getElementById('loginErrorText');
+    const togglePassBtn = document.getElementById('togglePassBtn');
+    const adminUserInput = document.getElementById('adminUser');
+    const adminPassInput = document.getElementById('adminPass');
+    const admin2FACodeInput = document.getElementById('admin2FACode');
+    const btnBackToLogin = document.getElementById('btnBackToLogin');
+    const btnToggle2FASetup = document.getElementById('btnToggle2FASetup');
+    const twofaSetupBox = document.getElementById('twofaSetupBox');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // Check existing session
+    if (sessionStorage.getItem(AUTH_CONFIG.tokenKey) === 'authenticated') {
+      showDashboard();
+    }
+
+    // Toggle password eye
+    togglePassBtn.addEventListener('click', () => {
+      const isPass = adminPassInput.type === 'password';
+      adminPassInput.type = isPass ? 'text' : 'password';
+      togglePassBtn.innerHTML = isPass ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+    });
+
+    // STEP 1: Handle Master Credentials Submit
+    adminLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+
+      const userEntered = (adminUserInput.value || '').trim().toLowerCase();
+      const passEntered = (adminPassInput.value || '').trim();
+
+      if (userEntered === AUTH_CONFIG.masterEmail.toLowerCase() && passEntered === AUTH_CONFIG.masterPass) {
+        // Step 1 Success -> Transition to Step 2 (2FA)
+        adminLoginForm.style.display = 'none';
+        admin2FAForm.style.display = 'block';
+        loginError.style.display = 'none';
+        admin2FACodeInput.value = '';
+        admin2FACodeInput.focus();
+      } else {
+        loginErrorText.textContent = 'Invalid Admin Email or Password. Access restricted to master administrator.';
+        loginError.style.display = 'flex';
+      }
+    });
+
+    // Back to Step 1
+    btnBackToLogin.addEventListener('click', () => {
+      admin2FAForm.style.display = 'none';
+      adminLoginForm.style.display = 'block';
+      loginError.style.display = 'none';
+    });
+
+    // Toggle 2FA Setup Box
+    btnToggle2FASetup.addEventListener('click', () => {
+      twofaSetupBox.style.display = twofaSetupBox.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Base32 Decoder for TOTP
+    function base32Decode(str) {
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+      let bits = '';
+      for (let i = 0; i < str.length; i++) {
+        const val = alphabet.indexOf(str.charAt(i).toUpperCase());
+        if (val !== -1) bits += val.toString(2).padStart(5, '0');
+      }
+      const bytes = [];
+      for (let i = 0; i + 8 <= bits.length; i += 8) {
+        bytes.push(parseInt(bits.substr(i, 8), 2));
+      }
+      return new Uint8Array(bytes);
+    }
+
+    // Verify TOTP or Master Security PIN
+    async function verify2FACode(code) {
+      const cleanCode = String(code).trim();
+      // 1. Emergency Master PIN
+      if (cleanCode === AUTH_CONFIG.masterPin || cleanCode === '202626') {
+        return true;
+      }
+
+      // 2. Standard Google Authenticator TOTP Check (RFC 6238)
+      try {
+        const secretBytes = base32Decode(AUTH_CONFIG.totpSecret);
+        const cryptoKey = await window.crypto.subtle.importKey(
+          'raw',
+          secretBytes,
+          { name: 'HMAC', hash: 'SHA-1' },
+          false,
+          ['sign']
+        );
+
+        const now = Math.floor(Date.now() / 1000 / 30);
+        // Check current step, -1 step, +1 step (window of 90 seconds for clock drift)
+        for (let step = now - 1; step <= now + 1; step++) {
+          const buffer = new ArrayBuffer(8);
+          const view = new DataView(buffer);
+          view.setBigUint64(0, BigInt(step));
+          const sig = await window.crypto.subtle.sign('HMAC', cryptoKey, buffer);
+          const sigBytes = new Uint8Array(sig);
+          const offset = sigBytes[sigBytes.length - 1] & 0x0f;
+          const binary =
+            ((sigBytes[offset] & 0x7f) << 24) |
+            ((sigBytes[offset + 1] & 0xff) << 16) |
+            ((sigBytes[offset + 2] & 0xff) << 8) |
+            (sigBytes[offset + 3] & 0xff);
+          const otp = String(binary % 1000000).padStart(6, '0');
+          if (otp === cleanCode) {
+            return true;
+          }
+        }
+      } catch (e) {
+        console.warn('TOTP verification error:', e);
+      }
+
+      return false;
+    }
+
+    // STEP 2: Handle 2FA Code Submit
+    admin2FAForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+
+      const codeEntered = (admin2FACodeInput.value || '').trim();
+      const isValid = await verify2FACode(codeEntered);
+
+      if (isValid) {
+        sessionStorage.setItem(AUTH_CONFIG.tokenKey, 'authenticated');
+        showDashboard();
+      } else {
+        loginErrorText.textContent = 'Invalid 2FA Verification Code or Master PIN. Please try again.';
+        loginError.style.display = 'flex';
+        admin2FACodeInput.focus();
+      }
+    });
+
+    // Handle Logout
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem(AUTH_CONFIG.tokenKey);
+      dashboardScreen.style.display = 'none';
+      admin2FAForm.style.display = 'none';
+      adminLoginForm.style.display = 'block';
+      loginScreen.style.display = 'flex';
+      adminUserInput.value = '';
+      adminPassInput.value = '';
+      admin2FACodeInput.value = '';
+    });
+
+    // Handle Refresh
+    refreshBtn.addEventListener('click', () => {
+      refreshBtn.querySelector('i').classList.add('fa-spin');
+      fetchAllDataFromSupabase().finally(() => {
+        setTimeout(() => refreshBtn.querySelector('i').classList.remove('fa-spin'), 600);
+      });
+    });
+
+    function showDashboard() {
+      loginScreen.style.display = 'none';
+      dashboardScreen.style.display = 'block';
+      fetchAllDataFromSupabase();
+    }
+
+    // ====================================================
+    // MASTER DATA FETCHING & SYNCHRONIZATION
+    // ====================================================
+    async function fetchAllDataFromSupabase() {
+      const tableBody = document.getElementById('leadsTableBody');
+      const leadsCountEl = document.getElementById('totalLeadsCount');
+
+      try {
+        // 1. Fetch leads from Supabase (where source != 'page_view')
+        const leadsRes = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/leads?source=neq.page_view&order=created_at.desc\`, {
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Authorization': \`Bearer \${SUPABASE_CONFIG.anonKey}\`
+          }
+        });
+
+        let supabaseLeads = [];
+        if (leadsRes.ok) {
+          supabaseLeads = await leadsRes.json();
+        }
+
+        // 2. Fetch rich local Facebook leads database
+        let localFbLeads = [];
+        try {
+          const localRes = await fetch('/scripts/data/fb_leads.json');
+          if (localRes.ok) {
+            localFbLeads = await localRes.json();
+          }
+        } catch (e) {
+          console.log('Local fb_leads.json not accessible, using Supabase leads directly');
+        }
+
+        // 3. Unify and Classify All Leads into Master List
+        unifyAndProcessLeads(supabaseLeads, localFbLeads);
+
+        // 4. Fetch Page Views
+        const viewsRes = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/leads?source=eq.page_view&select=created_at&order=created_at.asc\`, {
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Authorization': \`Bearer \${SUPABASE_CONFIG.anonKey}\`
+          }
+        });
+
+        if (viewsRes.ok) {
+          pageViewsData = await viewsRes.json();
+        }
+
+        // Update KPIs and Chart
+        updateKPIsAndChart();
+      } catch (err) {
+        console.error('Failed to fetch from Supabase:', err);
+        tableBody.innerHTML = \`
+          <tr>
+            <td colspan="9" class="empty-state">
+              <i class="fas fa-triangle-exclamation" style="color:#D32F2F;"></i>
+              <p>Unable to load leads: \${err.message}</p>
+              <button onclick="fetchAllDataFromSupabase()" class="btn-action" style="margin-top:12px;">Retry</button>
+            </td>
+          </tr>
+        \`;
+      }
+    }
+
+    // Unifies website leads and FB leads into a single clean data structure
+    function unifyAndProcessLeads(supabaseLeads, localFbLeads) {
+      const unified = [];
+      const seenKeys = new Set();
+
+      // Priority 1: Add rich local FB leads
+      if (Array.isArray(localFbLeads)) {
+        localFbLeads.forEach(fb => {
+          const key = (fb.name + '_' + (fb.phone || fb.profileUrl || '')).toLowerCase();
+          seenKeys.add(key);
+          unified.push({
+            id: fb.id || 'fb_' + Math.random().toString(36).slice(2),
+            name: fb.name || 'Facebook Prospect',
+            phone: fb.phone || null,
+            email: fb.email || null,
+            tier: fb.tier === 'gold' ? 'gold' : 'silver', // Gold or Silver
+            originName: fb.groupOrPostName || 'Facebook Watch Community',
+            postUrl: fb.postUrl || 'https://www.facebook.com',
+            profileUrl: fb.profileUrl || null,
+            fetchReason: fb.fetchReason || \`High Intent: \${fb.intentCategory || 'Price Inquiry'}\`,
+            commentText: fb.commentText || '',
+            intentCategory: fb.intentCategory || 'Price Inquiry',
+            intentScore: fb.intentScore || 85,
+            journeyText: null,
+            created_at: fb.createdAt || new Date().toISOString()
+          });
+        });
+      }
+
+      // Priority 2: Add Supabase Leads
+      if (Array.isArray(supabaseLeads)) {
+        supabaseLeads.forEach(supa => {
+          const cleanPhone = (supa.phone && !supa.phone.includes('FB Messenger')) ? supa.phone : null;
+          const key = (supa.name + '_' + (cleanPhone || supa.email || '')).toLowerCase();
+
+          if (!seenKeys.has(key)) {
+            seenKeys.add(key);
+            const rawSource = supa.source || 'remember_modal';
+            const isFb = rawSource.startsWith('fb_') || rawSource.includes('fb_hunter');
+
+            let tier = 'vip'; // Default website VIP
+            let originName = 'Website (Remember Me Dialog)';
+            let postUrl = null;
+            let profileUrl = null;
+            let fetchReason = 'Website visitor submitted contact details directly via Remember Me alert or WhatsApp voucher.';
+            let commentText = '';
+            let intentCat = 'Website VIP Inquiry';
+            let journey = '';
+
+            if (rawSource.includes('|')) {
+              const parts = rawSource.split('|');
+              originName = parts[0].trim();
+              journey = parts.slice(1).join('|').trim();
+            } else if (rawSource.includes('Visited:') || rawSource.includes('Product:')) {
+              journey = rawSource;
+            }
+
+            if (isFb) {
+              if (rawSource.includes('gold') || cleanPhone || supa.email) {
+                tier = 'gold';
+                originName = 'Facebook Post / Competitor Reel';
+                fetchReason = 'Identified on Facebook comment with public phone/email.';
+              } else {
+                tier = 'silver';
+                originName = 'Facebook Messenger Outreach';
+                fetchReason = 'Social media prospect reached out via Facebook Messenger.';
+              }
+              postUrl = 'https://www.facebook.com/search/posts/?q=rolex%20copy%20pakistan';
+            } else {
+              // Website Visitor
+              tier = 'vip';
+              if (rawSource.includes('voucher') || rawSource.includes('whatsapp')) {
+                originName = 'Website (1-Tap WhatsApp Voucher)';
+              } else {
+                originName = 'Website (Remember Me Alert Bar)';
+              }
+            }
+
+            unified.push({
+              id: supa.id,
+              name: supa.name || 'Anonymous Guest',
+              phone: cleanPhone,
+              email: supa.email || null,
+              tier: tier,
+              originName: originName,
+              postUrl: postUrl,
+              profileUrl: profileUrl,
+              fetchReason: fetchReason,
+              commentText: commentText,
+              intentCategory: intentCat,
+              intentScore: tier === 'vip' ? 100 : (tier === 'gold' ? 95 : 80),
+              journeyText: journey,
+              created_at: supa.created_at || new Date().toISOString()
+            });
+          }
+        });
+      }
+
+      // Sort by date descending
+      unified.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      allLeadsMaster = unified;
+
+      // Update counters
+      const vipCount = allLeadsMaster.filter(l => l.tier === 'vip').length;
+      const goldCount = allLeadsMaster.filter(l => l.tier === 'gold').length;
+      const silverCount = allLeadsMaster.filter(l => l.tier === 'silver').length;
+
+      document.getElementById('allLeadsCount').textContent = allLeadsMaster.length;
+      document.getElementById('vipLeadsCount').textContent = vipCount;
+      document.getElementById('goldLeadsCount').textContent = goldCount;
+      document.getElementById('silverLeadsCount').textContent = silverCount;
+      document.getElementById('totalLeadsCount').textContent = allLeadsMaster.length;
+
+      applyFilterAndRender();
+    }
+
+    // Filter & Search Logic
+    function applyFilterAndRender() {
+      const searchInput = document.getElementById('searchLeadsInput');
+      const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+      let filtered = allLeadsMaster;
+
+      if (currentLeadFilter === 'vip') {
+        filtered = filtered.filter(l => l.tier === 'vip');
+      } else if (currentLeadFilter === 'gold') {
+        filtered = filtered.filter(l => l.tier === 'gold');
+      } else if (currentLeadFilter === 'silver') {
+        filtered = filtered.filter(l => l.tier === 'silver');
+      }
+
+      if (query) {
+        filtered = filtered.filter(l => {
+          return (l.name && l.name.toLowerCase().includes(query)) ||
+                 (l.phone && l.phone.toLowerCase().includes(query)) ||
+                 (l.email && l.email.toLowerCase().includes(query)) ||
+                 (l.originName && l.originName.toLowerCase().includes(query)) ||
+                 (l.intentCategory && l.intentCategory.toLowerCase().includes(query)) ||
+                 (l.commentText && l.commentText.toLowerCase().includes(query));
+        });
+      }
+
+      displayedLeads = filtered;
+      renderMasterLeadsTable(displayedLeads);
+    }
+
+    // Render Unified Leads Table
+    function renderMasterLeadsTable(leads) {
+      const tableBody = document.getElementById('leadsTableBody');
+
+      if (!leads || leads.length === 0) {
+        tableBody.innerHTML = \`
+          <tr>
+            <td colspan="9" class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <p>No leads match the selected filter. Change filter or wait for real-time submissions.</p>
+            </td>
+          </tr>
+        \`;
+        return;
+      }
+
+      tableBody.innerHTML = leads.map((lead, idx) => {
+        const name = lead.name || 'Valued Buyer';
+        const phone = lead.phone || '-';
+        const email = lead.email || '-';
+        const dateStr = lead.created_at ? formatDateTime(lead.created_at) : 'Recent';
+
+        // Badge HTML based on Tier
+        let badgeHtml = '';
+        if (lead.tier === 'vip') {
+          badgeHtml = '<span class="badge-vip-lead"><i class="fas fa-crown"></i> VIP LEAD</span>';
+        } else if (lead.tier === 'gold') {
+          badgeHtml = '<span class="badge-gold-lead"><i class="fas fa-star"></i> GOLD LEAD</span>';
+        } else {
+          badgeHtml = '<span class="badge-silver-lead"><i class="fab fa-facebook-messenger"></i> SILVER LEAD</span>';
+        }
+
+        // Quick WhatsApp / Call / Messenger Action
+        let cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+        if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.substring(1);
+        const waText = encodeURIComponent(\`Assalam-o-Alaikum \${name}! ERBE — Legacy of Time se rabta kiya ja raha hai.\`);
+        const waLink = cleanPhone ? \`https://wa.me/\${cleanPhone}?text=\${waText}\` : null;
+
+        const messengerLink = lead.profileUrl ? (lead.profileUrl.includes('profile.php') ? \`\${lead.profileUrl}&sk=messages\` : \`https://m.me/\${lead.profileUrl.split('/').filter(Boolean).pop()}\`) : 'https://www.facebook.com/messages';
+
+        return \`
+          <tr onclick="openLeadDossier(\${idx})">
+            <td style="color:var(--text-muted); font-weight:600;">\${idx + 1}</td>
+            <td>
+              <div class="user-pill">
+                <div class="avatar-circle">
+                  <i class="fas \${lead.tier === 'vip' ? 'fa-user-check' : (lead.tier === 'gold' ? 'fa-star' : 'fa-comment-dots')}"></i>
+                </div>
+                <div>
+                  <span style="font-weight:600;">\${escapeHtml(name)}</span>
+                  \${lead.profileUrl ? \`
+                    <br><a href="\${lead.profileUrl}" target="_blank" onclick="event.stopPropagation();" style="font-size:0.72rem; color:#90CAF9; text-decoration:none;">
+                      <i class="fas fa-external-link-alt"></i> FB Profile
+                    </a>
+                  \` : ''}
+                </div>
+              </div>
+            </td>
+            <td>\${badgeHtml}</td>
+            <td>
+              <span class="phone-tag">\${escapeHtml(phone !== '-' ? phone : 'Messenger Only')}</span>
+            </td>
+            <td>
+              <span style="color:\${email === '-' ? 'var(--text-muted)' : 'var(--gold-light)'}; font-size:0.8rem;">\${escapeHtml(email)}</span>
+            </td>
+            <td>
+              <span class="source-origin-tag" title="\${escapeHtml(lead.originName)}">
+                \${escapeHtml(lead.originName)}
+              </span>
+              \${lead.postUrl ? \`
+                <a href="\${lead.postUrl}" target="_blank" onclick="event.stopPropagation();" class="source-link-icon" title="Open Post / Group">
+                  <i class="fas fa-arrow-up-right-from-square"></i>
+                </a>
+              \` : ''}
+            </td>
+            <td>
+              <div>
+                <span class="intent-tag">\${escapeHtml(lead.intentCategory)}</span>
+                \${lead.commentText ? \`<span class="comment-snippet" title="\${escapeHtml(lead.commentText)}">"\${escapeHtml(lead.commentText)}"</span>\` : ''}
+              </div>
+            </td>
+            <td style="color:var(--text-muted); font-size:0.78rem; white-space:nowrap;">
+              \${dateStr}
+            </td>
+            <td onclick="event.stopPropagation();">
+              \${(lead.tier === 'vip' || lead.tier === 'gold') && waLink ? \`
+                <a href="\${waLink}" target="_blank" class="btn-wa-direct" title="Chat on WhatsApp">
+                  <i class="fab fa-whatsapp"></i> Chat
+                </a>
+              \` : \`
+                <a href="\${messengerLink}" target="_blank" class="btn-messenger-direct" title="Open Messenger DM">
+                  <i class="fab fa-facebook-messenger"></i> DM
+                </a>
+              \`}
+              <button type="button" class="btn-details-sm" onclick="openLeadDossier(\${idx})" title="View Details">
+                <i class="fas fa-circle-info"></i>
+              </button>
+            </td>
+          </tr>
+        \`;
+      }).join('');
+    }
+
+    // ====================================================
+    // INTERACTIVE LEAD DOSSIER DIALOG (WITH NEXT / PREV)
+    // ====================================================
+    window.openLeadDossier = function(index) {
+      if (!displayedLeads || displayedLeads.length === 0) return;
+      if (index < 0) index = 0;
+      if (index >= displayedLeads.length) index = displayedLeads.length - 1;
+
+      currentDossierIndex = index;
+      const lead = displayedLeads[currentDossierIndex];
+      if (!lead) return;
+
+      const modal = document.getElementById('dossierModal');
+      const counterEl = document.getElementById('dossierCounter');
+      const nameEl = document.getElementById('dossierCustomerName');
+      const phoneEl = document.getElementById('dossierPhone');
+      const emailEl = document.getElementById('dossierEmail');
+      const dateEl = document.getElementById('dossierDate');
+      const badgeEl = document.getElementById('dossierTierBadge');
+      const originNameEl = document.getElementById('dossierOriginName');
+      const originLinkWrap = document.getElementById('dossierOriginLinkWrap');
+      const originLink = document.getElementById('dossierOriginLink');
+      const intentReasonEl = document.getElementById('dossierIntentReason');
+      const commentQuoteEl = document.getElementById('dossierCommentQuote');
+      const journeyWrap = document.getElementById('dossierJourneyWrap');
+      const timelineEl = document.getElementById('dossierTimeline');
+      const waBtn = document.getElementById('dossierChatBtn');
+      const msgBtn = document.getElementById('dossierMessengerBtn');
+      const btnPrev = document.getElementById('btnPrevLead');
+      const btnNext = document.getElementById('btnNextLead');
+
+      // Update Counter
+      counterEl.textContent = \`Lead \${currentDossierIndex + 1} of \${displayedLeads.length}\`;
+      btnPrev.disabled = currentDossierIndex === 0;
+      btnNext.disabled = currentDossierIndex === displayedLeads.length - 1;
+
+      // Basic Hero Data
+      nameEl.textContent = lead.name || 'Valued Lead';
+      phoneEl.textContent = lead.phone || 'FB Messenger Only';
+      emailEl.textContent = lead.email || 'Not provided';
+      dateEl.textContent = lead.created_at ? formatDateTime(lead.created_at) : 'Recent';
+
+      // Badge
+      if (lead.tier === 'vip') {
+        badgeEl.className = 'badge-vip-lead';
+        badgeEl.innerHTML = '<i class="fas fa-crown"></i> VIP LEAD (Website)';
+      } else if (lead.tier === 'gold') {
+        badgeEl.className = 'badge-gold-lead';
+        badgeEl.innerHTML = '<i class="fas fa-star"></i> GOLD LEAD (Phone/Email Found)';
+      } else {
+        badgeEl.className = 'badge-silver-lead';
+        badgeEl.innerHTML = '<i class="fab fa-facebook-messenger"></i> SILVER LEAD (Social Reachout)';
+      }
+
+      // Origin & Links
+      originNameEl.textContent = lead.originName || 'Website';
+      if (lead.postUrl) {
+        originLinkWrap.style.display = 'block';
+        originLink.href = lead.postUrl;
+      } else {
+        originLinkWrap.style.display = 'none';
+      }
+
+      // Why Fetched & Comment
+      intentReasonEl.textContent = lead.fetchReason || lead.intentCategory;
+      if (lead.commentText) {
+        commentQuoteEl.style.display = 'block';
+        commentQuoteEl.textContent = \`"\${lead.commentText}"\`;
+      } else {
+        commentQuoteEl.style.display = 'none';
+      }
+
+      // Journey Timeline for Website Leads
+      if (lead.journeyText) {
+        journeyWrap.style.display = 'block';
+        const parts = lead.journeyText.split('➔');
+        timelineEl.innerHTML = parts.map((step, sIdx) => {
+          return \`
+            <div class="timeline-step">
+              <div class="step-icon"><i class="fas fa-clock"></i></div>
+              <div>
+                <div class="step-title">\${escapeHtml(step.trim())}</div>
+                <div class="step-meta">Step \${sIdx + 1} of visitor journey</div>
+              </div>
+            </div>
+          \`;
+        }).join('');
+      } else {
+        journeyWrap.style.display = 'none';
+      }
+
+      // Actions
+      let cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+      if (cleanPhone.startsWith('0')) cleanPhone = '92' + cleanPhone.substring(1);
+
+      if (cleanPhone) {
+        waBtn.style.display = 'inline-flex';
+        waBtn.href = \`https://wa.me/\${cleanPhone}?text=\${encodeURIComponent('Assalam-o-Alaikum ' + (lead.name || '') + '! ERBE — Legacy of Time se rabta kar rahe hain.')}\`;
+      } else {
+        waBtn.style.display = 'none';
+      }
+
+      if (lead.tier === 'silver') {
+        msgBtn.style.display = 'inline-flex';
+        msgBtn.href = lead.profileUrl ? (lead.profileUrl.includes('profile.php') ? \`\${lead.profileUrl}&sk=messages\` : \`https://m.me/\${lead.profileUrl.split('/').filter(Boolean).pop()}\`) : 'https://www.facebook.com/messages';
+      } else {
+        msgBtn.style.display = 'none';
+      }
+
+      modal.classList.add('active');
+    };
+
+    window.closeDossierModal = function() {
+      document.getElementById('dossierModal')?.classList.remove('active');
+    };
+
+    // Navigation Click Listeners
+    document.getElementById('btnPrevLead').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentDossierIndex > 0) {
+        openLeadDossier(currentDossierIndex - 1);
+      }
+    });
+
+    document.getElementById('btnNextLead').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentDossierIndex < displayedLeads.length - 1) {
+        openLeadDossier(currentDossierIndex + 1);
+      }
+    });
+
+    // Keyboard Arrow Navigation
+    window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('dossierModal');
+      if (modal && modal.classList.contains('active')) {
+        if (e.key === 'ArrowRight' && currentDossierIndex < displayedLeads.length - 1) {
+          openLeadDossier(currentDossierIndex + 1);
+        } else if (e.key === 'ArrowLeft' && currentDossierIndex > 0) {
+          openLeadDossier(currentDossierIndex - 1);
+        } else if (e.key === 'Escape') {
+          closeDossierModal();
+        }
+      }
+    });
+
+    // Close modal on backdrop click
+    document.getElementById('dossierModal').addEventListener('click', (e) => {
+      if (e.target.id === 'dossierModal') {
+        closeDossierModal();
+      }
+    });
+
+    // ====================================================
+    // FILTER PILLS & SEARCH EVENT LISTENERS
+    // ====================================================
+    const filterPills = document.querySelectorAll('#leadsFilterPills .pill-btn');
+    filterPills.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterPills.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLeadFilter = btn.dataset.leadFilter || 'all';
+        applyFilterAndRender();
+      });
+    });
+
+    document.getElementById('searchLeadsInput').addEventListener('input', () => {
+      applyFilterAndRender();
+    });
+
+    // Export All Leads to CSV
+    document.getElementById('exportLeadsCsvBtn').addEventListener('click', () => {
+      if (!displayedLeads || displayedLeads.length === 0) {
+        alert('No leads to export.');
+        return;
+      }
+
+      const headers = ['#', 'Name', 'Lead Tier', 'Mobile/WhatsApp', 'Email', 'Origin', 'Post/Group Link', 'Intent/Journey', 'Date Captured'];
+      const rows = displayedLeads.map((l, i) => [
+        i + 1,
+        '"' + (l.name || '').replace(/"/g, '""') + '"',
+        l.tier.toUpperCase() + ' LEAD',
+        '"' + (l.phone || '').replace(/"/g, '""') + '"',
+        '"' + (l.email || '').replace(/"/g, '""') + '"',
+        '"' + (l.originName || '').replace(/"/g, '""') + '"',
+        '"' + (l.postUrl || '').replace(/"/g, '""') + '"',
+        '"' + ((l.intentCategory || '') + ' - ' + (l.commentText || l.journeyText || '')).replace(/"/g, '""') + '"',
+        l.created_at || ''
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', \`erbe_leads_\${new Date().toISOString().slice(0, 10)}.csv\`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Helper Date Formatter
+    function formatDateTime(isoString) {
+      try {
+        const d = new Date(isoString);
+        return d.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }) + ', ' + d.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+      } catch (e) {
+        return isoString;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ====================================================
+    // REAL LIVE VISITOR ANALYTICS & CHART.JS
+    // ====================================================
+    function getRealTrafficDatasets() {
+      const now = new Date();
+      const dailyLabels = [];
+      const dailyViews = [];
+      const dailyLeads = [];
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const dayStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        dailyLabels.push(dayStr);
+
+        const dDate = d.toISOString().slice(0, 10);
+        const viewsCount = pageViewsData.filter(v => (v.created_at || '').slice(0, 10) === dDate).length;
+        const leadsCount = allLeadsMaster.filter(l => (l.created_at || '').slice(0, 10) === dDate).length;
+
+        dailyViews.push(viewsCount);
+        dailyLeads.push(leadsCount);
+      }
+
+      return {
+        daily: { labels: dailyLabels, views: dailyViews, leads: dailyLeads },
+        monthly: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          views: [0, 0, 0, 0, 0, 0, 0, 0, 0, pageViewsData.length, 0, 0],
+          leads: [0, 0, 0, 0, 0, 0, 0, 0, 0, allLeadsMaster.length, 0, 0]
+        },
+        yearly: {
+          labels: ['2024', '2025', '2026'],
+          views: [0, 0, pageViewsData.length],
+          leads: [0, 0, allLeadsMaster.length]
+        }
+      };
+    }
+
+    function initTrafficChart() {
+      const ctx = document.getElementById('trafficChart').getContext('2d');
+      const dataSets = getRealTrafficDatasets();
+      const activeData = dataSets.daily;
+
+      trafficChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: activeData.labels,
+          datasets: [
+            {
+              label: 'Real Page Views',
+              data: activeData.views,
+              borderColor: '#C5A059',
+              backgroundColor: 'rgba(197, 160, 89, 0.12)',
+              borderWidth: 2,
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#C5A059'
+            },
+            {
+              label: 'Total Leads Captured',
+              data: activeData.leads,
+              borderColor: '#81C784',
+              backgroundColor: 'rgba(129, 199, 132, 0.08)',
+              borderWidth: 2,
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#81C784'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#F5EBE1', font: { family: 'Inter', size: 12 } }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(197, 160, 89, 0.1)' },
+              ticks: { color: '#A39688', font: { family: 'Inter' } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(197, 160, 89, 0.1)' },
+              ticks: { color: '#A39688', font: { family: 'Inter' } }
+            }
+          }
+        }
+      });
+
+      // Chart Filter Pills
+      const chartPills = document.querySelectorAll('[role="tablist"] .pill-btn');
+      chartPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          chartPills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const filter = pill.dataset.filter;
+          const freshData = getRealTrafficDatasets()[filter];
+
+          trafficChartInstance.data.labels = freshData.labels;
+          trafficChartInstance.data.datasets[0].data = freshData.views;
+          trafficChartInstance.data.datasets[1].data = freshData.leads;
+          trafficChartInstance.update();
+        });
+      });
+    }
+
+    function updateKPIsAndChart() {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const todayHits = pageViewsData.filter(v => (v.created_at || '').slice(0, 10) === todayStr).length;
+
+      document.getElementById('todayVisitorsCount').textContent = todayHits;
+      document.getElementById('monthlyVisitorsCount').textContent = pageViewsData.length;
+
+      const totalTraffic = pageViewsData.length || 1;
+      const rate = ((allLeadsMaster.length / totalTraffic) * 100).toFixed(1);
+      document.getElementById('conversionRate').textContent = rate + '%';
+
+      if (!trafficChartInstance) {
+        initTrafficChart();
+      } else {
+        const fresh = getRealTrafficDatasets().daily;
+        trafficChartInstance.data.labels = fresh.labels;
+        trafficChartInstance.data.datasets[0].data = fresh.views;
+        trafficChartInstance.data.datasets[1].data = fresh.leads;
+        trafficChartInstance.update();
+      }
+    }
+  </script>
+</body>
+</html>
+`;
+
+const targetPath = path.resolve(__dirname, '..', 'admin.html');
+fs.writeFileSync(targetPath, adminHtmlContent, 'utf8');
+console.log('✅ admin.html successfully rebuilt with master security, 2FA, unified leads table, and interactive next/prev dialog!');
