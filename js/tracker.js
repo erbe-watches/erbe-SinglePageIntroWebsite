@@ -52,6 +52,8 @@
         currentPageName = 'Product: Rolex Date Edition';
         currentProduct = 'Rolex Oyster Date (Second Copy)';
       }
+    } else if (path.includes('collection.html')) {
+      currentPageName = 'Collection Catalog Page';
     } else if (path.includes('contact.html')) {
       currentPageName = 'Contact Us Page';
     } else if (path.includes('faq.html')) {

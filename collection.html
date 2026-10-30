@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watch Collection — ERBE Legacy of Time</title>
+  <meta name="description" content="Explore ERBE's complete direct-import watch collection. Premium luxury timepieces at 20–30% below market prices. Check your parcel before paying (COD)." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="images/erbe-logo.jpg" />
+  <link rel="apple-touch-icon" href="images/erbe-logo.jpg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/design-system.css?v=2.6" />
+  <link rel="stylesheet" href="css/style.css?v=2.6" />
+
+  <!-- Google tag (gtag.js) - Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHQ107E3PE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JHQ107E3PE');
+  </script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1147190308262519');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1147190308262519&ev=PageView&noscript=1"
+    alt="Meta Pixel" /></noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="logo-img" />
+        <div class="logo-text">
+          <span class="logo-brand">ERBE</span>
+          <span class="logo-tagline">Legacy of Time</span>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="faq.html" class="nav-link">FAQ</a>
+        <a href="privacy-policy.html" class="nav-link">Privacy</a>
+        <a href="terms-and-conditions.html" class="nav-link">Terms</a>
+      </nav>
+
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ RED ALERT LINE ============ -->
+  <div class="alert-bar" id="openRememberModal" role="button" tabindex="0" title="Click to open VIP Remember Me access">
+    <div class="alert-ticker">
+      <div class="alert-ticker-track">
+        <div class="alert-ticker-item">
+          <span class="alert-pulse"></span>
+          <span class="alert-badge-pill">VIP ACCESS</span>
+          <span class="alert-text">Press me to remember your self</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">20–30% Below Market Rates</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">Check Your Parcel Before Paying (COD)</span>
+          <span class="alert-sep">✦</span>
+          <span class="alert-text">Direct Import Luxury Watches</span>
+          <i class="fas fa-arrow-right alert-arrow"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ COLLECTION HERO ============ -->
+  <section class="page-hero">
+    <div class="container text-center">
+      <span class="section-subtitle">Direct Import Inventory</span>
+      <h1 class="section-title">The ERBE Collection</h1>
+      <div class="gold-line"></div>
+      <p class="section-desc">
+        Directly imported from international manufacturers. Guaranteed <strong>20–30% below market prices</strong> with nationwide Cash on Delivery and open parcel inspection before paying.
+      </p>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-pills-bar">
+        <button type="button" class="filter-pill-btn active" data-filter="all">
+          <i class="fas fa-border-all"></i> All Timepieces (10)
+        </button>
+        <button type="button" class="filter-pill-btn" data-filter="rolex">
+          <i class="fas fa-crown"></i> Rolex Tribute Edition (7)
+        </button>
+        <button type="button" class="filter-pill-btn" data-filter="tubular">
+          <i class="fas fa-clock"></i> Tubular Dual Sport (3)
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FULL CATALOG GRID ============ -->
+  <section class="section" style="padding-top: 20px;">
+    <div class="container">
+
+      <div class="catalog-grid" id="catalogGrid">
+
+        <!-- 1. Rolex Black Two-Tone -->
+        <div class="product-card" data-category="rolex">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-crown"></i> Bestseller</span>
+            <img src="images/products/rolex-black-twotone.jpg" alt="Rolex Black Dial Two-Tone Gold Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Tribute Luxury Edition</div>
+            <h3 class="product-card-title">Rolex Oyster Date</h3>
+            <p class="product-card-subtitle">Black Dial / Two-Tone Gold Chain</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 1,450</span>
+              <span class="card-original-price">Rs. 2,400</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=rolex-date" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Rolex%20Oyster%20Date%20(Black%20Dial%20/%20Two-Tone%20Gold)%20Rs.%201,450%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Rolex Black Silver -->
+        <div class="product-card" data-category="rolex">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-crown"></i> Classic</span>
+            <img src="images/products/rolex-black-silver.jpg" alt="Rolex Black Dial Silver Chain Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Tribute Luxury Edition</div>
+            <h3 class="product-card-title">Rolex Oyster Date</h3>
+            <p class="product-card-subtitle">Black Dial / Silver Chain</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 1,450</span>
+              <span class="card-original-price">Rs. 2,400</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=rolex-date" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Rolex%20Oyster%20Date%20(Black%20Dial%20/%20Silver%20Chain)%20Rs.%201,450%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Rolex Blue Silver -->
+        <div class="product-card" data-category="rolex">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-crown"></i> Sunray Blue</span>
+            <img src="images/products/rolex-blue-silver.jpg" alt="Rolex Sunray Blue Dial Silver Chain Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Tribute Luxury Edition</div>
+            <h3 class="product-card-title">Rolex Oyster Date</h3>
+            <p class="product-card-subtitle">Sunray Blue Dial / Silver Chain</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 1,450</span>
+              <span class="card-original-price">Rs. 2,400</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=rolex-date" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Rolex%20Oyster%20Date%20(Sunray%20Blue%20/%20Silver%20Chain)%20Rs.%201,450%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Rolex Green Two-Tone (Hulk) -->
+        <div class="product-card" data-category="rolex">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-crown"></i> Hulk Edition</span>
+            <img src="images/products/rolex-green-twotone.jpg" alt="Rolex Hulk Green Dial Two-Tone Gold Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Tribute Luxury Edition</div>
+            <h3 class="product-card-title">Rolex Oyster Date</h3>
+            <p class="product-card-subtitle">Hulk Green Dial / Two-Tone Gold Chain</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 1,450</span>
+              <span class="card-original-price">Rs. 2,400</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=rolex-date" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Rolex%20Oyster%20Date%20(Hulk%20Green%20/%20Two-Tone%20Gold)%20Rs.%201,450%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Rolex Green Silver (Emerald) -->
+        <div class="product-card" data-category="rolex">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-crown"></i> Emerald</span>
+            <img src="images/products/rolex-green-silver.jpg" alt="Rolex Emerald Green Dial Silver Chain Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Tribute Luxury Edition</div>
+            <h3 class="product-card-title">Rolex Oyster Date</h3>
+            <p class="product-card-subtitle">Emerald Green Dial / Silver Chain</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 1,450</span>
+              <span class="card-original-price">Rs. 2,400</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=rolex-date" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Rolex%20Oyster%20Date%20(Emerald%20Green%20/%20Silver%20Chain)%20Rs.%201,450%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Rolex Royal Blue Two-Tone -->
+        <div class="product-card" data-category="rolex">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-crown"></i> Royal Blue</span>
+            <img src="images/products/rolex-royalblue-twotone.jpg" alt="Rolex Royal Blue Dial Two-Tone Gold Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Tribute Luxury Edition</div>
+            <h3 class="product-card-title">Rolex Oyster Date</h3>
+            <p class="product-card-subtitle">Royal Blue Dial / Two-Tone Gold Chain</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 1,450</span>
+              <span class="card-original-price">Rs. 2,400</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=rolex-date" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Rolex%20Oyster%20Date%20(Royal%20Blue%20/%20Two-Tone%20Gold)%20Rs.%201,450%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Rolex White Two-Tone -->
+        <div class="product-card" data-category="rolex">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-crown"></i> Ivory White</span>
+            <img src="images/products/rolex-white-twotone.jpg" alt="Rolex Ivory White Dial Two-Tone Gold Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Tribute Luxury Edition</div>
+            <h3 class="product-card-title">Rolex Oyster Date</h3>
+            <p class="product-card-subtitle">Ivory White Dial / Two-Tone Gold Chain</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 1,450</span>
+              <span class="card-original-price">Rs. 2,400</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=rolex-date" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Rolex%20Oyster%20Date%20(Ivory%20White%20/%20Two-Tone%20Gold)%20Rs.%201,450%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Tubular Brown White -->
+        <div class="product-card" data-category="tubular">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-certificate"></i> Original Brand</span>
+            <img src="images/products/tubular-brown-white.jpg" alt="Tubular Dual Display Brown Leather Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Original Import Edition</div>
+            <h3 class="product-card-title">Tubular Dual Sport</h3>
+            <p class="product-card-subtitle">Brown Leather Belt / White Dial</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 2,200</span>
+              <span class="card-original-price">Rs. 3,500</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=tubular-dual" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Tubular%20Dual%20Sport%20(Brown%20Leather%20/%20White%20Dial)%20Rs.%202,200%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Tubular Light Brown Black -->
+        <div class="product-card" data-category="tubular">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-certificate"></i> Original Brand</span>
+            <img src="images/products/tubular-lightbrown-black.jpg" alt="Tubular Dual Display Light Brown Leather Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Original Import Edition</div>
+            <h3 class="product-card-title">Tubular Dual Sport</h3>
+            <p class="product-card-subtitle">Light Tan Belt / Black Dial</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 2,200</span>
+              <span class="card-original-price">Rs. 3,500</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=tubular-dual" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Tubular%20Dual%20Sport%20(Light%20Tan%20Belt%20/%20Black%20Dial)%20Rs.%202,200%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. Tubular Black Black -->
+        <div class="product-card" data-category="tubular">
+          <div class="product-card-media">
+            <span class="product-badge-float"><i class="fas fa-certificate"></i> Tactical Stealth</span>
+            <img src="images/products/tubular-black-black.jpg" alt="Tubular Dual Display Stealth Black Watch" />
+            <div class="product-cod-tag"><i class="fas fa-box-open"></i> Open Parcel Check</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">Original Import Edition</div>
+            <h3 class="product-card-title">Tubular Dual Sport</h3>
+            <p class="product-card-subtitle">Tactical Black Belt / Black Dial</p>
+
+            <div class="product-card-price-row">
+              <span class="card-current-price">Rs. 2,200</span>
+              <span class="card-original-price">Rs. 3,500</span>
+            </div>
+
+            <div class="product-card-actions">
+              <a href="product.html?id=tubular-dual" class="btn-card-details">
+                <i class="fas fa-eye"></i> View Details
+              </a>
+              <a href="https://wa.me/923071771829?text=Assalam%20o%20Alaikum%20ERBE!%20Mujhe%20Tubular%20Dual%20Sport%20(Tactical%20Black%20Belt%20/%20Black%20Dial)%20Rs.%202,200%20order%20karni%20hai." target="_blank" class="btn-card-order">
+                <i class="fab fa-whatsapp"></i> Order on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Trust Bar -->
+      <div class="collection-trust-banner">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+          <h4>100% Peace of Mind — Open Parcel Check Guarantee</h4>
+          <p>
+            Humara asool hai: <strong>Rider ke samne pehle parcel khol kar ghari tasalli se check karein</strong>, jab aap mutma'in ho jayein tab cash ada karein. Agar quality pasand na aaye toh on-the-spot parcel wapas!
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="logo-img" />
+            <div class="logo-text">
+              <span class="logo-brand">ERBE</span>
+              <span class="logo-tagline">Legacy of Time</span>
+            </div>
+          </a>
+          <p>
+            High-quality watches at 20–30% lower than market rates. Check your parcel before paying—complete peace of mind delivered to your doorstep.
+          </p>
+          <div class="footer-social">
+            <a href="https://www.facebook.com/profile.php?viewas=100000686899395&id=61594761540747" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/add/erbe_watches" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.snapchat.com/@erbe_watches" target="_blank" aria-label="Snapchat"><i class="fab fa-snapchat-ghost"></i></a>
+            <a href="https://www.tiktok.com/@erbe_watches" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="https://wa.me/923071771829" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="collection.html">Collection</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms-and-conditions.html">Terms & Conditions</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Contact</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:erbewatches@gmail.com">erbewatches@gmail.com</a></li>
+            <li><a href="tel:+923071771829">+92 307 177 1829</a></li>
+            <li><a href="https://wa.me/923071771829" target="_blank">WhatsApp Chat</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; <span id="currentYear">2026</span> ERBE — Legacy of Time. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="privacy-policy.html">Privacy</a>
+          <a href="terms-and-conditions.html">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ REMEMBER ME MODAL ============ -->
+  <div class="modal-overlay" id="rememberModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="closeRememberModal" aria-label="Close dialog">&times;</button>
+      
+      <div class="modal-header">
+        <div class="modal-logo-wrapper">
+          <img src="images/erbe-logo.jpg" alt="ERBE Logo" class="modal-logo" />
+        </div>
+        <span class="modal-badge">VIP Customer Access</span>
+        <h3 class="modal-title">Remember Me</h3>
+        <p class="modal-subtitle">
+          Save your details so ERBE can recognize you, remember your preferences, and share exclusive watch drops & 20–30% discount alerts!
+        </p>
+      </div>
+
+      <form class="modal-form" id="rememberForm">
+        <div class="form-group">
+          <label for="rememberName">Full Name</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="rememberName" name="name" placeholder="Enter your full name" required />
+          </div>
+        </div>
+
+        <div class="contact-switch-wrapper">
+          <label class="switch-label">Choose Contact Method:</label>
+          <div class="contact-switch-pills" role="tablist">
+            <button type="button" class="switch-pill active" id="tabPhoneBtn" data-tab="phone" role="tab" aria-selected="true">
+              <i class="fab fa-whatsapp"></i> WhatsApp / Phone
+            </button>
+            <button type="button" class="switch-pill" id="tabEmailBtn" data-tab="email" role="tab" aria-selected="false">
+              <i class="fas fa-envelope"></i> Email Address
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group contact-field" id="fieldPhoneGroup">
+          <label for="rememberPhone">Mobile / WhatsApp Number</label>
+          <div class="input-phone-group">
+            <span class="phone-prefix">+92</span>
+            <input 
+              type="tel" 
+              id="rememberPhone" 
+              name="phone" 
+              placeholder="0307 1771829 or 307 1771829" 
+              maxlength="11" 
+              inputmode="numeric" 
+            />
+          </div>
+          <span class="field-hint">Enter 10 or 11 digits (e.g. 0307... ya 307...)</span>
+        </div>
+
+        <div class="form-group contact-field" id="fieldEmailGroup" style="display: none;">
+          <label for="rememberEmail">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input 
+              type="email" 
+              id="rememberEmail" 
+              name="email" 
+              placeholder="name@gmail.com" 
+            />
+          </div>
+          <span class="field-hint">We will email you exclusive watch drops & discount alerts</span>
+        </div>
+
+        <div class="modal-error-msg" id="rememberError" style="display: none;"></div>
+
+        <button type="submit" class="btn btn-primary btn-modal-submit">
+          <i class="fas fa-check-circle"></i> Remember Me
+        </button>
+      </form>
+
+      <div class="modal-success" id="rememberSuccess" style="display: none;">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <h4>You're Remembered!</h4>
+        <p>Thank you for connecting with ERBE — Legacy of Time. Your details have been saved successfully.</p>
+        <button type="button" class="btn btn-outline" id="closeSuccessBtn">Continue Exploring</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/tracker.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Category Filter Pills Handler
+    const filterBtns = document.querySelectorAll('.filter-pill-btn');
+    const catalogCards = document.querySelectorAll('#catalogGrid .product-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+        catalogCards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
