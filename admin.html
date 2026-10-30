@@ -1038,10 +1038,16 @@
     // Handle Login Submit
     adminLoginForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const user = document.getElementById('adminUser').value.trim();
-      const pass = adminPassInput.value;
+      const user = (document.getElementById('adminUser').value || '').trim().toLowerCase();
+      const pass = (adminPassInput.value || '').trim();
 
-      if (user === AUTH_CONFIG.userHash && pass === AUTH_CONFIG.passHash) {
+      const validUsers = ['erbe_admin', 'erbe_watches', 'erbewatches@gmail.com'];
+      const validPasses = ['Erbe#Admin2026!Secure', 'Erbe2026#LegacyOfTime'];
+
+      const userMatch = validUsers.includes(user) || user === AUTH_CONFIG.userHash.toLowerCase();
+      const passMatch = validPasses.includes(pass) || pass === AUTH_CONFIG.passHash;
+
+      if (userMatch && passMatch) {
         sessionStorage.setItem(AUTH_CONFIG.tokenKey, 'authenticated');
         loginError.style.display = 'none';
         showDashboard();
@@ -1466,6 +1472,16 @@
         `"${l.source || ''}"`,
         `"${l.created_at || ''}"`
       ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `ERBE_VIP_Leads_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
     // ====================================================
     // VISITOR JOURNEY DOSSIER VIEWER
